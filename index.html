@@ -280,11 +280,6 @@
       cursor: not-allowed;
       color: #999;
     }
-    .calendly-embed-container {
-      margin-top: 12px;
-      border-radius: var(--border-radius-lg);
-      overflow: hidden;
-    }
     .typing-indicator span {
       display: inline-block;
       width: 10px;
@@ -317,6 +312,22 @@
     }
     a.contact-email:hover {
       color: #e6b800;
+    }
+    a.calendly-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: var(--primary-color);
+      color: var(--font-color);
+      border-radius: var(--border-radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+    a.calendly-link:hover {
+      background-color: #e6b800;
+      color: var(--font-color);
     }
   </style>
 </head>
@@ -361,64 +372,61 @@
               id: 'services_overview',
               keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'],
               response: {
-                text: `Coen provides support across several key areas. To give you the most relevant information, are you looking for short-term strategic advice or a longer-term interim leadership role?`,
-                chips: ["Strategic Advice", "Interim Leadership"]
-              }
+                text: `Coen provides support across several key areas. To give you the most relevant information, are you looking for short-term strategic advice or a longer-term interim leadership role?`
+              },
+              chips: ["Strategic Advice", "Interim Leadership"]
             },
             {
               id: 'experience_scrum',
               keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'],
               response: {
-                text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II). Is this type of role relevant for your project?`,
-                chips: ["What about Product Owner roles?", "Book a Call"]
-              }
+                text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II). Is this type of role relevant for your project?`
+              },
+              chips: ["What about Product Owner roles?", "Book a Call"]
             },
             {
               id: 'experience_po',
               keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'],
               response: {
-                text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool for PV systems. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`,
-                chips: ["Tell me about his technical skills", "Book a Call"]
-              }
+                text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool for PV systems. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`
+              },
+              chips: ["Tell me about his technical skills", "Book a Call"]
             },
             {
               id: 'experience_elipslife',
               keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'],
               response: {
-                text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>. He led a team of seven and managed a major international ERP implementation, which went live successfully. This project unified teams across four countries and migrated the entire insurance portfolio for the Netherlands.`,
-                chips: ["What about his work at Kramp?", "Book a Call"]
-              }
+                text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>. He led a team of seven and managed a major international ERP implementation, which went live successfully. This project unified teams across four countries and migrated the entire insurance portfolio for the Netherlands.`
+              },
+              chips: ["What about his work at Kramp?", "Book a Call"]
             },
             {
               id: 'experience_kramp',
               keywords: ['kramp', 'pmo', 'transformation'],
               response: {
-                text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a major Target Operating Model program. He was responsible for project management, tracking progress across 15 workstreams, and implementing new, more efficient ways of working across Europe.`,
-                chips: ["What other experience does he have?", "Book a Call"]
-              }
+                text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a major Target Operating Model program. He was responsible for project management, tracking progress across 15 workstreams, and implementing new, more efficient ways of working across Europe.`
+              },
+              chips: ["What other experience does he have?", "Book a Call"]
             },
             {
               id: 'contact',
               keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'appointment'],
               response: {
-                text: `The best next step is to schedule a brief introductory call with Coen. You can book a time that works for you directly in his calendar below:`,
-                htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`,
-                chips: ["Send Email"]
+                text: `The best next step is to schedule a brief introductory call with Coen. You can do that by clicking the link below: <br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a><br> Or you can email directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
               }
             },
             {
               id: 'thanks',
               keywords: ['thanks', 'thank you', 'ok', 'great'],
               response: {
-                text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect.",
-                chips: ["Services", "Scrum Master experience"]
-              }
+                text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect."
+              },
+              chips: ["Services", "Scrum Master experience"]
             }
           ],
           fallback: {
             generic: {
-              text: `I'm sorry, I don't have an answer for that. Please consider <strong>booking a call</strong> to speak directly with Coen, or you can <a href="mailto:coenzweers@solix.cc" class="contact-email">email him</a> to get in touch quickly.`,
-              chips: ["Book a Call", "Send Email"]
+              text: `I'm sorry, I don't have an answer to that. Please consider <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">booking a call</a> to speak directly with Coen, or you can <a href="mailto:coenzweers@solix.cc" class="contact-email">email him</a> to get in touch quickly.`
             },
             topicRedirects: [
               { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
@@ -441,64 +449,61 @@
               id: 'services_overview',
               keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'],
               response: {
-                text: `Coen ondersteunt op diverse kergebieden. Om u de beste informatie te geven, zoekt u strategisch advies voor de korte termijn, of een interim leiderschapsrol voor de langere termijn?`,
-                chips: ["Strategisch Advies", "Interim Leiderschap"]
-              }
+                text: `Coen ondersteunt op diverse kergebieden. Om u de beste informatie te geven, zoekt u strategisch advies voor de korte termijn, of een interim leiderschapsrol voor de langere termijn?`
+              },
+              chips: ["Strategisch Advies", "Interim Leiderschap"]
             },
             {
               id: 'experience_scrum',
               keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'],
               response: {
-                text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Is dit type rol relevant voor uw project?`,
-                chips: ["En als Product Owner?", "Plan een gesprek"]
-              }
+                text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Is dit type rol relevant voor uw project?`
+              },
+              chips: ["En als Product Owner?", "Plan een gesprek"]
             },
             {
               id: 'experience_po',
               keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'],
               response: {
-                text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool voor PV-systemen. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`,
-                chips: ["Wat zijn zijn technische skills?", "Plan een gesprek"]
-              }
+                text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool voor PV-systemen. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`
+              },
+              chips: ["Wat zijn zijn technische skills?", "Plan een gesprek"]
             },
             {
               id: 'experience_elipslife',
               keywords: ['elipslife', 'interim leiderschap', 'erp', 'verzekering'],
               response: {
-                text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie die succesvol live is gegaan. Dit project verenigde teams uit vier landen en migreerde de gehele Nederlandse verzekeringsportefeuille.`,
-                chips: ["En zijn werk bij Kramp?", "Plan een gesprek"]
-              }
+                text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie die succesvol live is gegaan. Dit project verenigde teams uit vier landen en migreerde de gehele Nederlandse verzekeringsportefeuille.`
+              },
+              chips: ["En zijn werk bij Kramp?", "Plan een gesprek"]
             },
             {
               id: 'experience_kramp',
               keywords: ['kramp', 'pmo', 'transformatie'],
               response: {
-                text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een groot Target Operating Model-programma. Hij was verantwoordelijk voor projectmanagement, het volgen van de voortgang van 15 'workstreams' en het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa.`,
-                chips: ["Welke andere ervaring heeft hij?", "Plan een gesprek"]
-              }
+                text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een groot Target Operating Model-programma. Hij was verantwoordelijk voor projectmanagement, het volgen van de voortgang van 15 'workstreams' en het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa.`
+              },
+              chips: ["Welke andere ervaring heeft hij?", "Plan een gesprek"]
             },
             {
               id: 'contact',
               keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'],
               response: {
-                text: `De beste volgende stap is een korte kennismaking met Coen. U kunt hieronder direct een geschikt moment in zijn agenda plannen:`,
-                htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`,
-                chips: ["Stuur e-mail"]
+                text: `De beste volgende stap is een korte kennismaking met Coen. U kunt dat doen door op de onderstaande link te klikken: <br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">Plan een gesprek</a><br> Of u kunt direct mailen via <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
               }
             },
             {
               id: 'thanks',
               keywords: ['bedankt', 'dank', 'ok', 'geweldig'],
               response: {
-                text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten.",
-                chips: ["Diensten", "Scrum Master ervaring"]
-              }
+                text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten."
+              },
+              chips: ["Diensten", "Scrum Master ervaring"]
             }
           ],
           fallback: {
             generic: {
-              text: `Het spijt me, ik heb geen antwoord op die vraag. U kunt <strong>een afspraak inplannen</strong> om direct met Coen te spreken of hem <a href="mailto:coenzweers@solix.cc" class="contact-email">per e-mail</a> bereiken.`,
-              chips: ["Plan een gesprek", "Stuur e-mail"]
+              text: `Het spijt me, ik heb geen antwoord op die vraag. Overweeg <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">een gesprek in te plannen</a> om direct met Coen te spreken of u kunt hem <a href="mailto:coenzweers@solix.cc" class="contact-email">per e-mail</a> bereiken.`
             },
             topicRedirects: [
               { topics: ['dienst', 'aanbod', 'helpen'], intentId: 'services_overview' },
@@ -588,8 +593,19 @@
             chip.onclick = () => {
               disableChips(chipsContainer);
               appendMessage('user', { text: escapeHTML(chipText) });
+              // Bij "Send Email" of "Stuur e-mail" wordt geen nieuwe bot response gehaald, maar e-mail info getoond
               if (chipText.toLowerCase().includes('email') || chipText.toLowerCase().includes('e-mail') || chipText.toLowerCase().includes('stuur e-mail')) {
-                appendMessage('bot', { text: `You can email Coen directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.` });
+                appendMessage('bot', {
+                  text: currentLanguage === 'nl' ?
+                    `U kunt Coen direct e-mailen via <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.` :
+                    `You can email Coen directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
+                });
+              } else if (chipText.toLowerCase().includes('book a call') || chipText.toLowerCase().includes('boek een gesprek') || chipText.toLowerCase().includes('plan een gesprek') || chipText.toLowerCase().includes('book a call') ) {
+                appendMessage('bot', {
+                  text: currentLanguage === 'nl' ?
+                    `Klik op de volgende link om een gesprek in te plannen: <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">Plan een gesprek</a>.` :
+                    `Click the link to book a call: <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a>.`
+                });
               } else {
                 handleBotResponse(chipText);
               }
