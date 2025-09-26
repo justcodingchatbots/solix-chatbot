@@ -311,6 +311,13 @@
         transform: scale(1.0);
       }
     }
+    a.contact-email {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+    a.contact-email:hover {
+      color: #e6b800;
+    }
   </style>
 </head>
 
@@ -323,7 +330,15 @@
     <main id="chat-messages" aria-live="polite" aria-relevant="additions"></main>
     <footer id="chat-input-container">
       <form id="chat-input-form" autocomplete="off" aria-label="Send message to chatbot">
-        <input id="user-input" type="text" name="user-input" aria-label="Type your message here" autocomplete="off" placeholder="" required />
+        <input
+          id="user-input"
+          type="text"
+          name="user-input"
+          aria-label="Type your message here"
+          autocomplete="off"
+          placeholder=""
+          required
+        />
         <button type="submit" id="send-btn" aria-label="Send message">➤</button>
       </form>
     </footer>
@@ -384,10 +399,11 @@
             },
             {
               id: 'contact',
-              keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'],
+              keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'appointment'],
               response: {
-                text: `The best next step is to schedule a brief introductory call with Coen. You can book a time that works for you directly in his calendar below.`,
-                htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`
+                text: `The best next step is to schedule a brief introductory call with Coen. You can book a time that works for you directly in his calendar below:`,
+                htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`,
+                chips: ["Send Email"]
               }
             },
             {
@@ -401,14 +417,14 @@
           ],
           fallback: {
             generic: {
-              text: "My apologies, I'm not sure how to answer that. I am best at questions regarding Coen's services, professional experience, or booking a meeting.",
-              chips: ["Services Offered", "Past Projects", "Book a Call"]
+              text: `I'm sorry, I don't have an answer for that. Please consider <strong>booking a call</strong> to speak directly with Coen, or you can <a href="mailto:coenzweers@solix.cc" class="contact-email">email him</a> to get in touch quickly.`,
+              chips: ["Book a Call", "Send Email"]
             },
             topicRedirects: [
               { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
               { topics: ['experience', 'work', 'history', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
               { topics: ['scrum', 'agile'], intentId: 'experience_scrum' },
-              { topics: ['contact', 'book', 'call', 'schedule'], intentId: 'contact' }
+              { topics: ['contact', 'book', 'call', 'schedule', 'appointment'], intentId: 'contact' }
             ]
           }
         },
@@ -465,8 +481,9 @@
               id: 'contact',
               keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'],
               response: {
-                text: `De beste volgende stap is een korte kennismaking met Coen. U kunt hieronder direct een geschikt moment in zijn agenda plannen.`,
-                htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`
+                text: `De beste volgende stap is een korte kennismaking met Coen. U kunt hieronder direct een geschikt moment in zijn agenda plannen:`,
+                htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`,
+                chips: ["Stuur e-mail"]
               }
             },
             {
@@ -480,8 +497,8 @@
           ],
           fallback: {
             generic: {
-              text: "Mijn excuses, dat begrijp ik niet. Ik kan het beste helpen met vragen over diensten, ervaring en contactmogelijkheden.",
-              chips: ["Diensten", "Ervaring", "Contact"]
+              text: `Het spijt me, ik heb geen antwoord op die vraag. U kunt <strong>een afspraak inplannen</strong> om direct met Coen te spreken of hem <a href="mailto:coenzweers@solix.cc" class="contact-email">per e-mail</a> bereiken.`,
+              chips: ["Plan een gesprek", "Stuur e-mail"]
             },
             topicRedirects: [
               { topics: ['dienst', 'aanbod', 'helpen'], intentId: 'services_overview' },
@@ -500,7 +517,7 @@
 
       let currentLanguage = navigator.language.startsWith('nl') ? 'nl' : 'en';
 
-      // Utility: escape HTML to prevent injection
+      // Escape HTML to prevent XSS
       function escapeHTML(text) {
         return text.replace(/[&<>"']/g, function (m) {
           return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
@@ -516,43 +533,36 @@
         appendMessage('bot', T.welcome);
       }
 
-      // Get bot response based on matching keywords and fallback redirects
+      // Identify intent and return response or fallback
       function getBotResponse(userText) {
         const textLower = userText.toLowerCase();
         const T = translations[currentLanguage];
 
-        // Exact keyword matching for intents
         for (const intent of T.intents) {
           if (intent.keywords.some(keyword => textLower.includes(keyword))) {
             return intent.response;
           }
         }
-        // If no direct intent matched, check redirects from fallback topics
         for (const redirect of T.fallback.topicRedirects) {
           if (redirect.topics.some(topic => textLower.includes(topic))) {
             const matchedIntent = T.intents.find(intent => intent.id === redirect.intentId);
             if (matchedIntent) return matchedIntent.response;
           }
         }
-        // If nothing matched, return generic fallback
         return T.fallback.generic;
       }
 
-      // Append a message to chat window
+      // Append message to chat window
       function appendMessage(sender, response) {
         const { text, chips = [], htmlContent = null, langSwitcher = null } = response;
         const messageWrapper = document.createElement('div');
         messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
 
-        let avatarHtml = '';
-        if (sender === 'bot') {
-          avatarHtml = `<div class="bot-avatar" aria-hidden="true">S</div>`;
-        }
+        let avatarHtml = sender === 'bot' ? `<div class="bot-avatar" aria-hidden="true">S</div>` : '';
 
         const messageContainer = document.createElement('div');
         messageContainer.className = 'message-container';
 
-        // Text content
         if (text) {
           const messageContent = document.createElement('div');
           messageContent.className = `message-content ${sender}-message-content`;
@@ -560,7 +570,6 @@
           messageContainer.appendChild(messageContent);
         }
 
-        // Calendly embed or HTML content
         if (htmlContent) {
           const embedContainer = document.createElement('div');
           embedContainer.className = 'calendly-embed-container';
@@ -568,7 +577,6 @@
           messageContainer.appendChild(embedContainer);
         }
 
-        // Suggestion chips
         if (chips.length > 0) {
           const chipsContainer = document.createElement('div');
           chipsContainer.className = 'suggestion-chips';
@@ -580,14 +588,17 @@
             chip.onclick = () => {
               disableChips(chipsContainer);
               appendMessage('user', { text: escapeHTML(chipText) });
-              handleBotResponse(chipText);
+              if (chipText.toLowerCase().includes('email') || chipText.toLowerCase().includes('e-mail') || chipText.toLowerCase().includes('stuur e-mail')) {
+                appendMessage('bot', { text: `You can email Coen directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.` });
+              } else {
+                handleBotResponse(chipText);
+              }
             };
             chipsContainer.appendChild(chip);
           });
           messageContainer.appendChild(chipsContainer);
         }
 
-        // Language switcher chip
         if (langSwitcher) {
           const langContainer = document.createElement('div');
           langContainer.className = 'language-switcher';
@@ -600,7 +611,6 @@
           messageContainer.appendChild(langContainer);
         }
 
-        // Timestamp
         const messageTime = document.createElement('time');
         messageTime.className = 'message-time';
         messageTime.setAttribute('datetime', new Date().toISOString());
@@ -613,7 +623,6 @@
         scrollToBottom();
       }
 
-      // Disable chips once clicked to prevent multiple clicks
       function disableChips(container) {
         container.querySelectorAll('.chip').forEach(chip => {
           chip.disabled = true;
@@ -622,12 +631,10 @@
         });
       }
 
-      // Scroll chat messages to bottom
       function scrollToBottom() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
 
-      // Show typing indicator
       function showTypingIndicator() {
         const indicatorHtml = `
           <div class="message-wrapper bot-message-wrapper" id="typing-indicator" aria-live="polite" aria-atomic="true">
@@ -644,16 +651,13 @@
         scrollToBottom();
       }
 
-      // Remove typing indicator
       function removeTypingIndicator() {
         const indicator = document.getElementById('typing-indicator');
         if (indicator) indicator.remove();
       }
 
-      // Handle bot response sequence with delay
       function handleBotResponse(userText) {
         showTypingIndicator();
-        // Simulate thinking delay for natural UX
         setTimeout(() => {
           removeTypingIndicator();
           const botResponse = getBotResponse(userText);
@@ -661,22 +665,19 @@
         }, 1200);
       }
 
-      // Handle user message form submission
       chatInputForm.addEventListener('submit', (e) => {
         e.preventDefault();
         let messageText = userInput.value.trim();
         if (!messageText) return;
-        // Sanitize input
         messageText = escapeHTML(messageText);
         appendMessage('user', { text: messageText });
         userInput.value = '';
         handleBotResponse(messageText);
       });
 
-      // Initialize with language and welcome message
       setLanguage(currentLanguage);
 
-      // Accessibility: focus input on load
+      // Focus input on load
       window.addEventListener('load', () => {
         userInput.focus();
       });
