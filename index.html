@@ -42,16 +42,6 @@
         .suggestion-chips, .language-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
         .chip { background-color: #fff8e1; color: var(--font-color); padding: 6px 12px; border-radius: 16px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
         .lang-chip { background-color: transparent; color: var(--font-color-light); font-size: 12px; border: 1px solid #dde1e6; padding: 4px 10px; }
-        
-        /* --- NEW STYLE FOR THE BOOKING LINK --- */
-        .booking-link {
-            color: #c7a100; /* A darker yellow for better readability */
-            font-weight: bold;
-            text-decoration: underline;
-        }
-        .booking-link:hover {
-            color: #997b00; /* Even darker on hover */
-        }
     </style>
 </head>
 <body>
@@ -78,14 +68,14 @@
                     title: "Solix AI Assistant",
                     placeholder: "e.g., Tell me about your Scrum Master experience",
                     welcome: {
-                        text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 3:14 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`,
+                        text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 3:12 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`,
                         chips: ["What are your main services?", "Give me a project example", "Book an Introduction"],
                         langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
                     },
                     intents: [
                         // --- MODIFIED CONTACT INTENT ---
                         { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { 
-                            text: `The best next step is to schedule a brief introductory call. You can book a time that works for you directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Book an Introduction Call</a>`,
+                            text: `The best next step is to schedule a brief introductory call. You can book a time that works for you directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer">Book an Introduction Call</a>`,
                             chips: ["What are the services?", "Thanks!"]
                         }},
                         // Other intents
@@ -110,14 +100,14 @@
                     title: "Solix AI Assistent",
                     placeholder: "bv. Vertel over je Scrum Master ervaring",
                     welcome: {
-                        text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 15:14 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
+                        text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 15:12 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
                         chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Heb je Scrum Master ervaring?"],
                         langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }
                     },
                     intents: [
                          // --- MODIFIED CONTACT INTENT (DUTCH) ---
                         { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { 
-                            text: `De beste volgende stap is een korte kennismaking. U kunt direct een geschikt moment inplannen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Plan een Kennismakingsgesprek</a>`,
+                            text: `De beste volgende stap is een korte kennismaking. U kunt direct een geschikt moment inplannen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer">Plan een Kennismakingsgesprek</a>`,
                             chips: ["Wat zijn de diensten?", "Bedankt!"]
                         }},
                         // Other intents
@@ -168,7 +158,7 @@
             chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
             function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
             function appendMessage(sender, response) {
-                const { text, chips = [], langSwitcher = null } = response;
+                const { text, chips = [], langSwitcher = null } = response; // htmlContent removed
                 const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
                 let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
                 const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
