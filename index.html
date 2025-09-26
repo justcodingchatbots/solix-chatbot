@@ -6,7 +6,7 @@
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <title>Solix.cc | AI Assistant</title>
     <style>
-        /* CSS is unchanged from the previous version */
+        /* CSS is unchanged */
         :root {
             --primary-color: #ffd100; --secondary-color: #f1f3f4; --bot-message-bg: #ffffff;
             --user-message-bg: #fff8e1; --font-color: #172b4d; --font-color-light: #6b778c;
@@ -77,21 +77,21 @@
                     title: "Solix AI Assistant",
                     placeholder: "e.g., Tell me about your Scrum Master experience",
                     welcome: {
-                        text: `Hello! I'm the AI assistant for Coen Zweers. I have been trained on his CV and can answer specific questions about his skills, projects, and services. How can I help?`,
-                        chips: ["What are your main services?", "Tell me about a specific project", "Do you have Scrum Master experience?"],
+                        text: `Hello! I'm the AI assistant for Coen Zweers. I can answer specific questions about his skills, projects, and services to help determine if he is the right fit for your assignment. What can I clarify for you?`,
+                        chips: ["What are your main services?", "Give me a project example", "Do you have Scrum Master experience?"],
                         langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
                     },
                     intents: [
-                        { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen provides support across several key areas. To give you the most relevant information, are you looking for short-term strategic advice or a longer-term interim leadership role?`, chips: ["Strategic Advice", "Interim Leadership"] }},
-                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II). Is this type of role relevant for your project?`, chips: ["What about Product Owner roles?", "Book a Call"] }},
-                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool for PV systems. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["Tell me about his technical skills", "Book a Call"] }},
-                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'], response: { text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>. He led a team of seven and managed a major international ERP implementation, which went live successfully. This project unified teams across four countries and migrated the entire insurance portfolio for the Netherlands.`, chips: ["What about his work at Kramp?", "Book a Call"] }},
-                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformation'], response: { text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a major Target Operating Model program. He was responsible for project management, tracking progress across 15 workstreams, and implementing new, more efficient ways of working across Europe.`, chips: ["What other experience does he have?", "Book a Call"] }},
+                        { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen focuses on two main areas: short-term Strategic & Transformation projects, and longer-term Interim Leadership roles. Which area is more relevant for you?`, chips: ["Strategy & Transformation", "Interim Leadership"] }},
+                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II). This experience is particularly valuable for roles requiring team transformation.`, chips: ["Tell me about Product Owner roles", "Book a Call"] }},
+                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["What about his work at elipsLife?", "Book a Call"] }},
+                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'], response: { text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>, a key leadership role. He led a team of seven and managed a major international ERP implementation which unified teams across four countries. This showcases his ability to handle complex projects and senior responsibilities.`, chips: ["Tell me about Kramp", "Book a Call"] }},
+                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformation', 'strategic advice'], response: { text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a large-scale Target Operating Model program. He tracked progress across 15 workstreams and helped implement new, more efficient ways of working across Europe. This is a prime example of his strategic and transformation skills.`, chips: ["What about his Scrum Master work?", "Book a Call"] }},
                         { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { text: `The best next step is to schedule a brief introductory call with Coen. You can book a time that works for you directly in his calendar below.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
                         { id: 'thanks', keywords: ['thanks', 'thank you', 'ok', 'great'], response: { text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect.", chips: ["Services", "Scrum Master experience"] }}
                     ],
                     fallback: {
-                        generic: { text: "My apologies, I'm not sure how to answer that. I am best at questions regarding Coen's services, professional experience, or booking a meeting.", chips: ["Services Offered", "Past Projects", "Book a Call"]},
+                        generic: { text: "My apologies, I'm not sure how to answer that. I can assist with questions regarding Coen's services, project experience, or booking a meeting. Which of these is most relevant?", chips: ["Services", "Project Experience", "Book a meeting"]},
                         topicRedirects: [
                             { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
                             { topics: ['experience', 'work', 'history', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
@@ -104,21 +104,21 @@
                     title: "Solix AI Assistent",
                     placeholder: "bv. Vertel over je Scrum Master ervaring",
                     welcome: {
-                        text: `Hallo! Ik ben de AI assistent van Coen Zweers. Ik ben getraind op basis van zijn CV en kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
-                        chips: ["Wat zijn de hoofddiensten?", "Vertel over een specifiek project", "Heb je Scrum Master ervaring?"],
+                        text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Ik ben getraind op zijn CV en kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten om te bepalen of hij de juiste kandidaat is voor uw opdracht. Wat kan ik voor u verduidelijken?`,
+                        chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Heb je Scrum Master ervaring?"],
                         langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }
                     },
                     intents: [
-                        { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen ondersteunt op diverse kergebieden. Om u de beste informatie te geven, zoekt u strategisch advies voor de korte termijn, of een interim leiderschapsrol voor de langere termijn?`, chips: ["Strategisch Advies", "Interim Leiderschap"] }},
-                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Is dit type rol relevant voor uw project?`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
-                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool voor PV-systemen. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`, chips: ["Wat zijn zijn technische skills?", "Plan een gesprek"] }},
-                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leiderschap', 'erp', 'verzekering'], response: { text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie die succesvol live is gegaan. Dit project verenigde teams uit vier landen en migreerde de gehele Nederlandse verzekeringsportefeuille.`, chips: ["En zijn werk bij Kramp?", "Plan een gesprek"] }},
-                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformatie'], response: { text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een groot Target Operating Model-programma. Hij was verantwoordelijk voor projectmanagement, het volgen van de voortgang van 15 'workstreams' en het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa.`, chips: ["Welke andere ervaring heeft hij?", "Plan een gesprek"] }},
+                        { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen focust op twee hoofdgebieden: Strategische & Transformatieprojecten voor de korte termijn, en Interim Leiderschapsrollen voor de langere termijn. Welk gebied is voor u het meest relevant?`, chips: ["Strategie & Transformatie", "Interim Leiderschap"] }},
+                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Deze ervaring is met name waardevol voor rollen die teamtransformatie vereisen.`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
+                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`, chips: ["Vertel over zijn werk bij elipsLife?", "Plan een gesprek"] }},
+                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leiderschap', 'erp', 'verzekering'], response: { text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>, een essentiële leiderschapsrol. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie. Dit toont zijn vermogen om complexe projecten en senior verantwoordelijkheden te dragen.`, chips: ["Vertel over Kramp", "Plan een gesprek"] }},
+                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformatie', 'strategisch advies'], response: { text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een grootschalig Target Operating Model-programma. Hij volgde de voortgang van 15 'workstreams' en hielp bij het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa. Dit is een perfect voorbeeld van zijn strategische en transformatievaardigheden.`, chips: ["En zijn Scrum Master werk?", "Plan een gesprek"] }},
                         { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { text: `De beste volgende stap is een korte kennismaking met Coen. U kunt hieronder direct een geschikt moment in zijn agenda plannen.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
                         { id: 'thanks', keywords: ['bedankt', 'dank', 'ok', 'geweldig'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten.", chips: ["Diensten", "Scrum Master ervaring"] }}
                     ],
                     fallback: {
-                        generic: { text: "Mijn excuses, dat begrijp ik niet. Ik kan het beste helpen met vragen over diensten, ervaring en contactmogelijkheden.", chips: ["Diensten", "Ervaring", "Contact"] },
+                        generic: { text: "Mijn excuses, dat begrijp ik niet. Ik kan u het beste helpen met vragen over diensten, projectervaring of het plannen van een gesprek. Wat is voor u het meest relevant?", chips: ["Diensten", "Projectervaring", "Plan een gesprek"] },
                         topicRedirects: [
                             { topics: ['dienst', 'aanbod', 'helpen'], intentId: 'services_overview' },
                             { topics: ['ervaring', 'werk', 'historie', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
@@ -129,6 +129,7 @@
                 }
             };
             
+            // --- Core Functions ---
             function setLanguage(lang) {
                 currentLanguage = lang;
                 const T = translations[lang];
@@ -155,7 +156,6 @@
                 return T.fallback.generic;
             }
 
-            // --- Core Functions (appendMessage, etc.) ---
             chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
             function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
             function appendMessage(sender, response) {
@@ -183,7 +183,6 @@
             function removeTypingIndicator() { const indicator = document.getElementById('typing-indicator'); if (indicator) indicator.remove(); }
             function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-            // Initialize the chat
             setLanguage(currentLanguage);
         });
     </script>
