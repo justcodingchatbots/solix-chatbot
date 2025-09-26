@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Solix.cc | AI Assistant CV</title>
   <style>
     :root {
@@ -143,7 +143,7 @@
       border: 1px solid #ccc;
       border-radius: 20px;
       padding: 10px 18px;
-      font-size: 14px;
+      font-size: 16px; /* Prevent zoom when typing */
       outline: none;
       transition: border-color 0.2s;
       background: #fff;
@@ -186,7 +186,7 @@
       const userInput = document.getElementById('user-input');
       const chatMessages = document.getElementById('chat-messages');
 
-      // Full CV knowledge base with keywords and detailed answers
+      // Comprehensive CV knowledge base with keywords
       const knowledgeBase = [
         {
           id: 'profile',
@@ -240,7 +240,8 @@
         for (const item of knowledgeBase) {
           if (item.keywords.some(keyword => lower.includes(keyword))) return item.response;
         }
-        return `Sorry, I don't have information on that. For a detailed discussion, please book a call or send an email to <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>.`;
+        // Fallback with contact suggestion including clickable email link
+        return `Sorry, I don't have information on that. The best next step is to book a call or send an email to <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a> for a detailed discussion.`;
       }
 
       function appendMessage(sender, message) {
@@ -254,7 +255,7 @@
         content.className = 'message-content ' + (sender === 'bot' ? 'bot-message-content' : 'user-message-content');
 
         if (sender === 'bot') {
-          content.innerHTML = message;  // allows safe html links
+          content.innerHTML = message; // allows HTML links in bot messages
         } else {
           content.textContent = message;
         }
@@ -285,6 +286,7 @@
         }, 500);
       };
 
+      // Initial greeting
       appendMessage('bot', "Hello! Ask me anything about Coen Zweers’ CV, including his experience, education, skills, certifications, and internships.");
     });
   </script>
