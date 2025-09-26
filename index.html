@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solix.cc | AI Assistant</title>
     <style>
+        /* CSS is unchanged */
         :root {
             --primary-color: #ffd100; --secondary-color: #f1f3f4; --bot-message-bg: #ffffff;
             --user-message-bg: #fff8e1; --font-color: #172b4d; --font-color-light: #6b778c;
@@ -70,53 +71,58 @@
             const chatTitle = document.getElementById('chat-title');
 
             let currentLanguage = navigator.language.startsWith('nl') ? 'nl' : 'en';
-
+            
+            // --- UPDATED KNOWLEDGE BASE ---
             const translations = {
                 en: {
                     title: "Solix AI Assistant",
-                    placeholder: "e.g., Tell me about your Scrum Master experience",
-                    welcome: { text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 5:26 PM in Amsterdam. I am trained on his CV and can answer specific questions about skills, projects, and services. How can I help?`, chips: ["What are your main services?", "Give me a project example", "How do I get in touch?"], langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }},
+                    placeholder: "Ask about skills, rates, or experience...",
+                    welcome: { text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 8:39 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`, chips: ["What are your skills?", "What is your industry experience?", "What is your rate?"], langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }},
                     formContent: {
                         intro: "Please fill out the form below. Clicking 'Send Email' will open your default email client with your message ready to send.",
                         nameLabel: "Name", emailLabel: "Email", requestLabel: "Your Request", buttonText: "✉️ Send Email"
                     },
                     intents: [
-                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'touch'], response: { 
-                            // --- MODIFIED RESPONSE ---
-                            text: `The most effective way to connect is to schedule a brief introductory call. You can book a time directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Book an Introduction Call</a><br><br>Alternatively, you can send a direct email to:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`,
-                            chips: ["What are the services?", "Thanks!"] 
-                        }},
+                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'touch'], response: { text: `The most effective way to connect is to schedule a brief introductory call. You can book a time directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Book an Introduction Call</a><br><br>Alternatively, you can send a direct email to:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`, chips: ["What are the services?", "Thanks!"] }},
                         { id: 'request_form', keywords: ['yes, send a message', 'message form'], response: { form: true }},
+                        // --- NEW FAQ INTENTS ---
+                        { id: 'skills_specialized', keywords: ['skill', 'skills', 'specialized', 'expertise', 'focus'], response: { text: `Coen specializes in four main areas: <strong>Product Management, IT Project Management, Agile Scrum Transformations, and Management/IT/Strategy Consultancy.</strong>`, chips: ["Tell me about a project", "What's your hourly rate?"] }},
+                        { id: 'experience_industry', keywords: ['industry', 'sector', 'client type', 'financial', 'energy'], response: { text: `Coen has expertise in both the <strong>financial and energy sectors</strong>. He began his career at Accenture, specializing in finance, and later moved into the energy industry with companies like Sunrock on large-scale solar projects.`, chips: ["What specific skills do you have?", "Can you provide references?"] }},
+                        { id: 'experience_years', keywords: ['how many years', 'how long', 'since when', 'years of experience'], response: { text: `Coen has been gaining professional experience and knowledge in the IT field since 2016, giving him over <strong>${new Date().getFullYear() - 2016} years</strong> of hands-on expertise.`, chips: ["What are his main skills?", "Tell me about a project"] }},
+                        { id: 'experience_examples', keywords: ['example', 'similar project'], response: { text: `Of course. A great recent example is his work at <strong>elipsLife</strong>, where he served as interim Head of Business Services and managed a major international ERP implementation. This project unified teams across four countries. Is a project like this relevant to you?`, chips: ["Tell me more about elipsLife", "What about other projects?"] }},
+                        { id: 'work_hours', keywords: ['hours', 'how many hours', 'availability', 'overtime'], response: { text: `Coen typically works a standard <strong>40-hour week</strong> and does not charge for overtime.`, chips: ["What is your hourly rate?", "Where do you work?"] }},
+                        { id: 'work_location', keywords: ['where', 'location', 'amsterdam', 'utrecht', 'hague', 'remote', 'work from home'], response: { text: `He prefers to work near <strong>Amsterdam, The Hague, or Utrecht</strong>, but is flexible, especially if working from home is an option.`, chips: ["How many hours a week?", "Book a call"] }},
+                        { id: 'references', keywords: ['references', 'recommendations'], response: { text: `Of course. For reference contact details, please send a direct message to <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a> and he will provide them.`, chips: ["Book a Call", "Ask another question"] }},
+                        { id: 'rate', keywords: ['rate', 'hourly rate', 'cost', 'price', 'tarieven'], response: { text: `Coen's hourly rate depends on the scope and duration of the assignment. For an accurate quote, the best approach is to book a short, introductory call to discuss your project needs.`, chips: ["Book an Introduction Call", "What are your skills?"] }},
+                        { id: 'insurance', keywords: ['insurance', 'liability', 'indemnity'], response: { text: `Yes, as a professional freelancer, Coen has arranged for comprehensive insurance coverage, including professional indemnity, disability, and business liability insurance.`, chips: ["What is your hourly rate?", "Book a call"] }},
+                        // --- END NEW FAQ INTENTS ---
                         { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen focuses on two main areas: short-term Strategic & Transformation projects, and longer-term Interim Leadership roles. Which area is more relevant for you?`, chips: ["Strategy & Transformation", "Interim Leadership"] }},
-                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II).`, chips: ["What about Product Owner roles?", "Book a Call"] }},
-                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["What about his work at elipsLife?", "Book a Call"] }},
-                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'], response: { text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>, a key leadership role. He led a team of seven and managed a major international ERP implementation which unified teams across four countries.`, chips: ["Tell me about Kramp", "Book a Call"] }},
-                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformation', 'strategic advice'], response: { text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a large-scale Target Operating Model program. He tracked progress across 15 workstreams and helped implement new, more efficient ways of working across Europe.`, chips: ["What about his Scrum Master work?", "Book a Call"] }},
+                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He is also a certified Professional Scrum Master (PSM II).`, chips: ["What about Product Owner roles?", "Book a Call"] }},
                         { id: 'thanks', keywords: ['thanks', 'thank you', 'ok', 'great'], response: { text: "You're welcome! If you have any other questions, feel free to ask.", chips: ["Services", "Scrum Master experience"] }}
                     ],
                     fallback: { text: "My apologies, I can't find a specific answer for that. I can help with questions about Coen's services, or I can open a form for you to send a direct message. What would you prefer?", chips: ["Yes, send a message", "Ask something else"] }
                 },
                 nl: {
                     title: "Solix AI Assistent",
-                    placeholder: "bv. Vertel over je Scrum Master ervaring",
-                    welcome: { text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 17:26 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`, chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Hoe neem ik contact op?"], langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }},
-                    formContent: {
-                        intro: "Vul alstublieft het onderstaande formulier in. Als u op 'Verstuur E-mail' klikt, wordt uw standaard e-mailprogramma geopend met uw bericht.",
-                        nameLabel: "Naam", emailLabel: "E-mailadres", requestLabel: "Uw Vraag of Verzoek", buttonText: "✉️ Verstuur E-mail"
-                    },
+                    placeholder: "Vraag naar skills, tarieven of ervaring...",
+                    welcome: { text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 20:39 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`, chips: ["Wat zijn uw skills?", "Wat is uw branche-ervaring?", "Wat is uw tarief?"], langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }},
+                    formContent: { intro: "Vul alstublieft het onderstaande formulier in. Als u op 'Verstuur E-mail' klikt, wordt uw standaard e-mailprogramma geopend met uw bericht.", nameLabel: "Naam", emailLabel: "E-mailadres", requestLabel: "Uw Vraag of Verzoek", buttonText: "✉️ Verstuur E-mail" },
                     intents: [
-                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { 
-                            // --- MODIFIED RESPONSE (DUTCH) ---
-                            text: `De meest effectieve manier om een gesprek te starten is door een kennismaking in te plannen. U kunt direct een geschikt moment kiezen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Plan een Kennismakingsgesprek</a><br><br>U kunt ook direct een e-mail sturen naar:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`,
-                            chips: ["Wat zijn de diensten?", "Bedankt!"]
-                        }},
+                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { text: `De meest effectieve manier om een gesprek te starten is door een kennismaking in te plannen. U kunt direct een geschikt moment kiezen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Plan een Kennismakingsgesprek</a><br><br>U kunt ook direct een e-mail sturen naar:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`, chips: ["Wat zijn de diensten?", "Bedankt!"] }},
                         { id: 'request_form', keywords: ['ja, stuur een bericht', 'bericht versturen'], response: { form: true }},
+                        // --- NEW FAQ INTENTS (DUTCH) ---
+                        { id: 'skills_specialized', keywords: ['skill', 'skills', 'specialisatie', 'expertise', 'focus'], response: { text: `Coen is gespecialiseerd in vier hoofdgebieden: <strong>Product Management, IT Project Management, Agile Scrum Transformaties, en Management/IT/Strategie Consultancy.</strong>`, chips: ["Vertel over een project", "Wat is uw uurtarief?"] }},
+                        { id: 'experience_industry', keywords: ['industrie', 'sector', 'klanttype', 'financieel', 'energie'], response: { text: `Coen heeft expertise in zowel de <strong>financiële als de energiesector</strong>. Hij begon zijn carrière bij Accenture met een focus op de financiële sector, en is later als freelancer overgestapt naar de energiesector bij bedrijven als Sunrock.`, chips: ["Wat zijn uw specifieke skills?", "Kunt u referenties geven?"] }},
+                        { id: 'experience_years', keywords: ['hoeveel jaar', 'hoe lang', 'sinds wanneer', 'jaren ervaring'], response: { text: `Coen doet al sinds 2016 professionele ervaring op in het IT-vakgebied, wat hem meer dan <strong>${new Date().getFullYear() - 2016} jaar</strong> praktijkervaring geeft.`, chips: ["Wat zijn de belangrijkste skills?", "Vertel over een project"] }},
+                        { id: 'experience_examples', keywords: ['voorbeeld', 'vergelijkbaar project'], response: { text: `Natuurlijk. Een goed recent voorbeeld is zijn werk bij <strong>elipsLife</strong>, waar hij als interim Hoofd Business Services een grote internationale ERP-implementatie heeft geleid die teams in vier landen verenigde. Is een dergelijk project relevant voor u?`, chips: ["Vertel meer over elipsLife", "Andere projecten?"] }},
+                        { id: 'work_hours', keywords: ['uren', 'hoeveel uur', 'beschikbaarheid', 'overuren'], response: { text: `Coen werkt doorgaans een standaardwerkweek van <strong>40 uur</strong> en rekent geen overuren.`, chips: ["Wat is uw uurtarief?", "Waar werkt u?"] }},
+                        { id: 'work_location', keywords: ['waar', 'locatie', 'amsterdam', 'utrecht', 'den haag', 'thuiswerken'], response: { text: `Zijn voorkeur gaat uit naar opdrachten in de buurt van <strong>Amsterdam, Den Haag of Utrecht</strong>, maar hij is flexibel, zeker als thuiswerken een optie is.`, chips: ["Hoeveel uur per week?", "Plan een gesprek"] }},
+                        { id: 'references', keywords: ['referenties', 'aanbevelingen'], response: { text: `Uiteraard. Voor contactgegevens van referenties kunt u een direct bericht sturen naar <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>, dan zal Coen deze verstrekken.`, chips: ["Plan een gesprek", "Stel een andere vraag"] }},
+                        { id: 'rate', keywords: ['uurtarief', 'tarief', 'kosten', 'prijs'], response: { text: `Het uurtarief van Coen is afhankelijk van de opdracht. Voor een precieze prijsopgave kunt u het beste een kort kennismakingsgesprek inplannen om de wensen voor het project te bespreken.`, chips: ["Plan een Kennismakingsgesprek", "Wat zijn uw skills?"] }},
+                        { id: 'insurance', keywords: ['verzekering', 'verzekerd', 'aansprakelijkheid'], response: { text: `Ja, als professioneel freelancer heeft Coen een uitgebreid verzekeringspakket, inclusief een beroepsaansprakelijkheids-, arbeidsongeschiktheids- en bedrijfsaansprakelijkheidsverzekering.`, chips: ["Wat is uw tarief?", "Plan een gesprek"] }},
+                        // --- END NEW FAQ INTENTS ---
                         { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen focust op twee hoofdgebieden: Strategische & Transformatieprojecten (korte termijn), en Interim Leiderschapsrollen (lange termijn). Welk gebied is voor u het meest relevant?`, chips: ["Strategie & Transformatie", "Interim Leiderschap"] }},
-                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II).`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
-                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`, chips: ["Vertel over zijn werk bij elipsLife?", "Plan een gesprek"] }},
-                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leiderschap', 'erp', 'verzekering'], response: { text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>, een essentiële leiderschapsrol. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie.`, chips: ["Vertel over Kramp", "Plan een gesprek"] }},
-                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformatie', 'strategisch advies'], response: { text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een grootschalig Target Operating Model-programma. Hij volgde de voortgang van 15 'workstreams' en hielp bij het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa.`, chips: ["En zijn Scrum Master werk?", "Plan een gesprek"] }},
-                        { id: 'thanks', keywords: ['bedankt', 'dank', 'ok', 'geweldig'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust.", chips: ["Diensten", "Scrum Master ervaring"] }}
+                        { id: 'thanks', keywords: ['bedankt', 'dank', 'ok', 'geweldig'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust.", chips: ["Diensten", "Ervaring"] }}
                     ],
                     fallback: { text: "Mijn excuses, ik kan geen specifiek antwoord vinden. Ik kan u helpen met vragen over de diensten van Coen, of ik kan een formulier openen zodat u een direct bericht kunt sturen. Wat heeft uw voorkeur?", chips: ["Ja, stuur een bericht", "Stel een andere vraag"] }
                 }
@@ -134,9 +140,7 @@
             function getBotResponse(userText) {
                 const text = userText.toLowerCase();
                 const T = translations[currentLanguage];
-                for (const intent of T.intents) {
-                    if (intent.keywords.some(keyword => text.includes(keyword))) return intent.response;
-                }
+                for (const intent of T.intents) { if (intent.keywords.some(keyword => text.includes(keyword))) return intent.response; }
                 return T.fallback;
             }
             
@@ -145,9 +149,7 @@
                 const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
                 let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
                 const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
-
                 if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
-                
                 if (form) {
                     const T_form = translations[currentLanguage].formContent;
                     const formIntro = document.createElement('div'); formIntro.className = 'message-content bot-message-content'; formIntro.style.marginBottom = '10px'; formIntro.innerHTML = T_form.intro; messageContainer.appendChild(formIntro);
@@ -162,7 +164,6 @@
                         window.location.href = `mailto:coenzweers@solix.cc?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                     });
                 }
-
                 if (chips && chips.length > 0) {
                     const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
                     chips.forEach(chipText => {
