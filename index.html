@@ -186,7 +186,7 @@
       const userInput = document.getElementById('user-input');
       const chatMessages = document.getElementById('chat-messages');
 
-      // The full CV knowledge base: each with keywords and detailed answers (simplified here for brevity)
+      // Full CV knowledge base with keywords and detailed answers
       const knowledgeBase = [
         {
           id: 'profile',
@@ -240,7 +240,7 @@
         for (const item of knowledgeBase) {
           if (item.keywords.some(keyword => lower.includes(keyword))) return item.response;
         }
-        return "Sorry, I don't have information on that. Please ask about Coen's experience, education, skills, or projects.";
+        return `Sorry, I don't have information on that. For a detailed discussion, please book a call or send an email to <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>.`;
       }
 
       function appendMessage(sender, message) {
@@ -253,7 +253,11 @@
         const content = document.createElement('div');
         content.className = 'message-content ' + (sender === 'bot' ? 'bot-message-content' : 'user-message-content');
 
-        content.textContent = message;
+        if (sender === 'bot') {
+          content.innerHTML = message;  // allows safe html links
+        } else {
+          content.textContent = message;
+        }
 
         container.appendChild(content);
 
