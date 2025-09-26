@@ -1,294 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>Solix.cc | AI Assistant CV</title>
-  <style>
-    :root {
-      --primary-color: #ffd100;
-      --secondary-color: #f1f3f4;
-      --bot-message-bg: #ffffff;
-      --user-message-bg: #fff8e1;
-      --font-color: #172b4d;
-      --font-color-light: #6b778c;
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-    html, body {
-      width: 100vw;
-      height: 100%;
-      min-height: 100dvh;
-      margin: 0; padding: 0;
-      font-family: var(--font-family);
-      background: var(--secondary-color);
-      box-sizing: border-box;
-      overscroll-behavior: none;
-    }
-    #chatbot-container {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw;
-      height: 100dvh;
-      background: var(--secondary-color);
-      display: flex;
-      flex-direction: column;
-      z-index: 9999;
-      overflow: hidden;
-    }
-    #chat-header {
-      background-color: var(--primary-color);
-      color: var(--font-color);
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-      min-height: 56px;
-      user-select: none;
-    }
-    #header-avatar {
-      width: 40px; height: 40px; border-radius: 50%; background-color: rgba(0,0,0,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 20px; flex-shrink: 0;
-    }
-    #chat-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
-    #chat-messages {
-      flex: 1 1 0%;
-      min-height: 0;
-      overflow-y: auto;
-      background: var(--secondary-color);
-      padding: 16px;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-    }
-    .message-wrapper {
-      display: flex;
-      margin-bottom: 20px;
-      animation: fadeIn 0.4s ease;
-      word-break: break-word;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .bot-message-wrapper { justify-content: flex-start; }
-    .user-message-wrapper { justify-content: flex-end; }
-    .bot-avatar {
-      width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-color);
-      color: var(--font-color); display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 16px; margin-right: 12px; flex-shrink: 0;
-    }
-    .message-content {
-      padding: 12px 16px;
-      border-radius: 8px;
-      line-height: 1.5;
-      max-width: 90%;
-      box-sizing: border-box;
-      white-space: pre-line;
-    }
-    .message-container {
-      display: flex;
-      flex-direction: column;
-      max-width: calc(100% - 44px);
-    }
-    .bot-message-wrapper .message-container {
-      align-items: flex-start;
-    }
-    .user-message-wrapper .message-container {
-      align-items: flex-end;
-      max-width: 85%;
-    }
-    .bot-message-content {
-      background-color: var(--bot-message-bg);
-      color: var(--font-color);
-      border-bottom-left-radius: 8px;
-    }
-    .user-message-content {
-      background-color: var(--user-message-bg);
-      color: var(--font-color);
-      border-bottom-right-radius: 8px;
-    }
-    .message-time {
-      font-size: 11px;
-      color: var(--font-color-light);
-      margin-top: 6px;
-      padding: 0 5px;
-      user-select: none;
-    }
-    .typing-indicator span {
-      height: 8px;
-      width: 8px;
-      margin: 0 2px;
-      background-color: #b0b8c8;
-      border-radius: 50%;
-      display: inline-block;
-      animation: bounce 1.4s infinite ease-in-out both;
-    }
-    @keyframes bounce {
-      0%,80%,100% { transform: scale(0); }
-      40% { transform: scale(1.0); }
-    }
-    #chat-input-container {
-      border-top: 1px solid #dde1e6;
-      background-color: #fff;
-      padding: 15px 20px;
-      flex-shrink: 0;
-    }
-    #chat-input-form {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      gap: 10px;
-    }
-    #user-input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 10px 18px;
-      font-size: 16px; /* Prevent zoom when typing */
-      outline: none;
-      transition: border-color 0.2s;
-      background: #fff;
-      min-width: 0;
-      width: 1px;
-    }
-    #send-btn {
-      background-color: var(--primary-color);
-      color: var(--font-color);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solix.cc | AI Assistant</title>
+    <style>
+        :root {
+            --primary-color: #ffd100; --secondary-color: #f1f3f4; --bot-message-bg: #ffffff;
+            --user-message-bg: #fff8e1; --font-color: #172b4d; --font-color-light: #6b778c;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --border-radius-lg: 16px; --border-radius-sm: 8px;
+        }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: var(--font-family); background-color: transparent; }
+        #chatbot-container { width: 100%; height: 100%; background-color: var(--secondary-color); display: flex; flex-direction: column; overflow: hidden; }
+        @media (min-width: 768px) {
+            body { display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+            #chatbot-container { max-width: 480px; height: 85%; max-height: 750px; border-radius: var(--border-radius-lg); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); }
+        }
+        #chat-header { background-color: var(--primary-color); color: var(--font-color); padding: 16px 20px; display: flex; align-items: center; flex-shrink: 0; gap: 12px; }
+        #header-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; }
+        #chat-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
+        #chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; min-height: 0; }
+        .message-wrapper { display: flex; margin-bottom: 20px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .bot-message-wrapper { justify-content: flex-start; }
+        .user-message-wrapper { justify-content: flex-end; }
+        .bot-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-color); color: var(--font-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; margin-right: 12px; flex-shrink: 0; }
+        .message-content { padding: 12px 16px; border-radius: var(--border-radius-lg); line-height: 1.5; word-wrap: break-word; max-width: 100%; }
+        .message-container { display: flex; flex-direction: column; max-width: calc(100% - 44px); }
+        .bot-message-wrapper .message-container { align-items: flex-start; }
+        .user-message-wrapper .message-container { align-items: flex-end; max-width: 85%; }
+        .bot-message-content { background-color: var(--bot-message-bg); color: var(--font-color); border-bottom-left-radius: var(--border-radius-sm); }
+        .user-message-content { background-color: var(--user-message-bg); color: var(--font-color); border-bottom-right-radius: var(--border-radius-sm); }
+        .message-time { font-size: 11px; color: var(--font-color-light); margin-top: 6px; padding: 0 5px; }
+        .typing-indicator span { height: 8px; width: 8px; margin: 0 2px; background-color: #b0b8c8; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite ease-in-out both; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+        #chat-input-container { border-top: 1px solid #dde1e6; padding: 15px 20px; background-color: white; flex-shrink: 0; }
+        #chat-input-form { display: flex; align-items: center; }
+        #user-input { flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 18px; font-size: 14px; margin-right: 10px; outline: none; transition: border-color 0.2s; }
+        #send-btn { background-color: var(--primary-color); color: var(--font-color); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; flex-shrink: 0; }
+        .suggestion-chips, .language-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .chip { background-color: #fff8e1; color: var(--font-color); padding: 6px 12px; border-radius: 16px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+        .lang-chip { background-color: transparent; color: var(--font-color-light); font-size: 12px; border: 1px solid #dde1e6; padding: 4px 10px; }
+    </style>
 </head>
 <body>
-  <div id="chatbot-container">
-    <div id="chat-header">
-      <div id="header-avatar">S</div>
-      <h3 id="chat-title">Solix AI Assistant</h3>
+    <div id="chatbot-container">
+        <div id="chat-header"><div id="header-avatar">S</div><h3 id="chat-title">Solix AI Assistant</h3></div>
+        <div id="chat-messages"></div>
+        <div id="chat-input-container">
+            <form id="chat-input-form">
+                <input type="text" id="user-input" autocomplete="off"><button type="submit" id="send-btn">&#10148;</button>
+            </form>
+        </div>
     </div>
-    <div id="chat-messages"></div>
-    <div id="chat-input-container">
-      <form id="chat-input-form">
-        <input type="text" id="user-input" autocomplete="off" placeholder="Ask me about Coen's CV, experience, skills..." />
-        <button type="submit" id="send-btn">➤</button>
-      </form>
-    </div>
-  </div>
-  <script>
-    window.addEventListener('load', () => {
-      const chatInputForm = document.getElementById('chat-input-form');
-      const userInput = document.getElementById('user-input');
-      const chatMessages = document.getElementById('chat-messages');
+    <script>
+        window.addEventListener('load', () => {
+            const chatInputForm = document.getElementById('chat-input-form');
+            const userInput = document.getElementById('user-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatTitle = document.getElementById('chat-title');
 
-      // Comprehensive CV knowledge base with keywords
-      const knowledgeBase = [
-        {
-          id: 'profile',
-          keywords: ['profile', 'about', 'summary', 'who are you', 'personality'],
-          response: `Energetic, opportunity spotter and enjoying life to the fullest! Seasoned IT specialist with structured way of working, people-first mentality, and results-driven.`
-        },
-        {
-          id: 'elipslife',
-          keywords: ['elipslife', 'head of business services', 'erp', 'insurance', 'project management'],
-          response: `At elipsLife (07/2024–07/2025), Coen led a team of seven business experts and project managers focused on business servicing, process mapping, and digital product development. He managed a large ERP system implementation across multiple countries with a successful go-live on May 12, 2025. Key deliverables include a new core insurance platform, finance application platform interfacing with SAP, and full migration of the portfolio in the Netherlands.`
-        },
-        {
-          id: 'kramp',
-          keywords: ['kramp', 'transformation', 'pmо', 'target operating model', 'change management'],
-          response: `At Kramp (09/2023–06/2024), Coen was Transformation Management Officer (PMO) for the Target Operating Model program, responsible for project management, communications and change plans across 15 workstreams and Europe-wide adoption of new organizational models.`
-        },
-        {
-          id: 'sunrock',
-          keywords: ['sunrock', 'product owner', 'it product manager', 'solar parks', 'digital tools'],
-          response: `At Sunrock (06/2022–07/2023), Coen led the end-to-end development and launch of a customer portal and a digital design tool for solar PV systems, improving customer engagement and innovation strategy execution. Skills include backlog management in Jira and design using Figma.`
-        },
-        {
-          id: 'abnamro',
-          keywords: ['abnamro', 'agile coach', 'scrum master', 'agile', 'scrum framework'],
-          response: `At ABN AMRO (09/2021–06/2022), Coen was Agile Coach and Scrum Master for 3 teams, helping transition to an agile mindset, organizing scrum ceremonies, and temporarily replacing product owners.`
-        },
-        {
-          id: 'accenture',
-          keywords: ['accenture', 'strategy consultant', 'rpa', 'ai', 'product owner', 'blockchain'],
-          response: `At Accenture (2017–2021), roles included Strategy Consultant, IT Product Owner for Rabobank, Business Analyst for Rabobank and ING, and Blockchain developer for APG. Achievements: AI monitoring solutions, RPA automation, blockchain projects in pensions, and fraud management systems.`
-        },
-        {
-          id: 'education',
-          keywords: ['education', 'msc', 'bsc', 'university', 'hanze', 'groningen'],
-          response: `Coen holds an MSc in Marketing Analytics and Data Science from University of Groningen (2015–2017), a Pre-MSc Marketing year, an international exchange in South Korea, and a BSc in Industrial Engineering & Management from Hanze University.`
-        },
-        {
-          id: 'skills',
-          keywords: ['skills', 'software', 'certificates', 'rpa', 'blockchain', 'scrum', 'pspo', 'psm', 'languages'],
-          response: `Skills include Strategy & Technology Consulting, Agile Scrum Project Management, Blockchain & DLT, RPA, NLP, Product Design, and Stakeholder Management. Software: MS Office, Jira, Figma, Automation Anywhere, ServiceNow, Splunk, Confluence and more. Certifications: PSPO II, PSM II, SAFe Agilist, Advanced Scrum Master, Certified RPA Professional, R3 Corda Developer. Languages: Dutch (native), English (full professional), German (limited).`
-        },
-        {
-          id: 'internships',
-          keywords: ['internship', 'vodafone', 'toll group', 'hooghoudt', 'marketing intelligence', 'supply chain'],
-          response: `Coen completed internships at Vodafone HQ in Marketing Intelligence, Toll Group in Nike's supply chain management, and Hooghoudt Jenever in production line redesign.`
-        },
-      ];
+            let currentLanguage = navigator.language.startsWith('nl') ? 'nl' : 'en';
 
-      function getResponseForInput(text) {
-        const lower = text.toLowerCase();
-        for (const item of knowledgeBase) {
-          if (item.keywords.some(keyword => lower.includes(keyword))) return item.response;
-        }
-        // Fallback with contact suggestion including clickable email link
-        return `Sorry, I don't have information on that. The best next step is to book a call or send an email to <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a> for a detailed discussion.`;
-      }
+            const translations = {
+                en: {
+                    title: "Solix AI Assistant",
+                    placeholder: "e.g., Tell me about your Scrum Master experience",
+                    welcome: {
+                        text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 3:12 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`,
+                        chips: ["What are your main services?", "Give me a project example", "Book an Introduction"],
+                        langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
+                    },
+                    intents: [
+                        // --- MODIFIED CONTACT INTENT ---
+                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { 
+                            text: `The best next step is to schedule a brief introductory call. You can book a time that works for you directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer">Book an Introduction Call</a>`,
+                            chips: ["What are the services?", "Thanks!"]
+                        }},
+                        // Other intents
+                        { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen focuses on two main areas: short-term Strategic & Transformation projects, and longer-term Interim Leadership roles. Which area is more relevant for you?`, chips: ["Strategy & Transformation", "Interim Leadership"] }},
+                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II).`, chips: ["What about Product Owner roles?", "Book a Call"] }},
+                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["What about his work at elipsLife?", "Book a Call"] }},
+                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'], response: { text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>, a key leadership role. He led a team of seven and managed a major international ERP implementation which unified teams across four countries. This showcases his ability to handle complex projects and senior responsibilities.`, chips: ["Tell me about Kramp", "Book a Call"] }},
+                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformation', 'strategic advice'], response: { text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a large-scale Target Operating Model program. He tracked progress across 15 workstreams and helped implement new, more efficient ways of working across Europe. This is a prime example of his strategic and transformation skills.`, chips: ["What about his Scrum Master work?", "Book a Call"] }},
+                        { id: 'thanks', keywords: ['thanks', 'thank you', 'ok', 'great'], response: { text: "You're welcome! If you have any other questions, feel free to ask.", chips: ["Services", "Scrum Master experience"] }}
+                    ],
+                    fallback: {
+                        generic: { text: "My apologies, I'm not sure how to answer that. I am best at questions regarding Coen's services, professional experience, or booking a meeting. Which of these is most relevant?", chips: ["Services Offered", "Past Projects", "Book a meeting"]},
+                        topicRedirects: [
+                            { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
+                            { topics: ['experience', 'work', 'history', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
+                            { topics: ['scrum', 'agile'], intentId: 'experience_scrum'},
+                            { topics: ['contact', 'book', 'call', 'schedule'], intentId: 'contact' }
+                        ]
+                    }
+                },
+                nl: {
+                    title: "Solix AI Assistent",
+                    placeholder: "bv. Vertel over je Scrum Master ervaring",
+                    welcome: {
+                        text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 15:12 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
+                        chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Heb je Scrum Master ervaring?"],
+                        langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }
+                    },
+                    intents: [
+                         // --- MODIFIED CONTACT INTENT (DUTCH) ---
+                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { 
+                            text: `De beste volgende stap is een korte kennismaking. U kunt direct een geschikt moment inplannen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer">Plan een Kennismakingsgesprek</a>`,
+                            chips: ["Wat zijn de diensten?", "Bedankt!"]
+                        }},
+                        // Other intents
+                        { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen focust op twee hoofdgebieden: Strategische & Transformatieprojecten voor de korte termijn, en Interim Leiderschapsrollen voor de langere termijn. Welk gebied is voor u het meest relevant?`, chips: ["Strategie & Transformatie", "Interim Leiderschap"] }},
+                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II).`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
+                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`, chips: ["Vertel over zijn werk bij elipsLife?", "Plan een gesprek"] }},
+                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leiderschap', 'erp', 'verzekering'], response: { text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>, een essentiële leiderschapsrol. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie.`, chips: ["Vertel over Kramp", "Plan een gesprek"] }},
+                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformatie', 'strategisch advies'], response: { text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een grootschalig Target Operating Model-programma. Hij volgde de voortgang van 15 'workstreams' en hielp bij het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa.`, chips: ["En zijn Scrum Master werk?", "Plan een gesprek"] }},
+                        { id: 'thanks', keywords: ['bedankt', 'dank', 'ok', 'geweldig'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust.", chips: ["Diensten", "Scrum Master ervaring"] }}
+                    ],
+                    fallback: {
+                        generic: { text: "Mijn excuses, dat begrijp ik niet. Ik kan u het beste helpen met vragen over diensten, projectervaring of het plannen van een gesprek. Wat is voor u het meest relevant?", chips: ["Diensten", "Projectervaring", "Plan een gesprek"] },
+                        topicRedirects: [
+                            { topics: ['dienst', 'aanbod', 'helpen'], intentId: 'services_overview' },
+                            { topics: ['ervaring', 'werk', 'historie', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
+                            { topics: ['scrum', 'agile'], intentId: 'experience_scrum'},
+                            { topics: ['contact', 'boek', 'gesprek', 'afspraak'], intentId: 'contact' }
+                        ]
+                    }
+                }
+            };
+            
+            // --- Core Functions ---
+            function setLanguage(lang) {
+                currentLanguage = lang;
+                const T = translations[lang];
+                chatTitle.textContent = T.title;
+                userInput.placeholder = T.placeholder;
+                chatMessages.innerHTML = '';
+                appendMessage('bot', T.welcome);
+            }
 
-      function appendMessage(sender, message) {
-        const wrapper = document.createElement('div');
-        wrapper.className = `message-wrapper ${sender}-message-wrapper`;
+            function getBotResponse(userText) {
+                const text = userText.toLowerCase();
+                const T = translations[currentLanguage];
+                for (const intent of T.intents) {
+                    if (intent.keywords.some(keyword => text.includes(keyword))) { return intent.response; }
+                }
+                for (const redirect of T.fallback.topicRedirects) {
+                    if (redirect.topics.some(topic => text.includes(topic))) {
+                        const matchedIntent = T.intents.find(intent => intent.id === redirect.intentId);
+                        if (matchedIntent) return matchedIntent.response;
+                    }
+                }
+                return T.fallback.generic;
+            }
 
-        const container = document.createElement('div');
-        container.className = 'message-container';
+            chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
+            function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
+            function appendMessage(sender, response) {
+                const { text, chips = [], langSwitcher = null } = response; // htmlContent removed
+                const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
+                let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
+                const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
+                if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
+                if (chips.length > 0) {
+                    const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
+                    chips.forEach(chipText => {
+                        const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = chipText;
+                        chip.onclick = () => { chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none'); chip.style.backgroundColor = 'var(--primary-color)'; chip.style.color = 'var(--font-color)'; appendMessage('user', { text: chipText }); handleBotResponse(chipText); };
+                        chipsContainer.appendChild(chip);
+                    });
+                    messageContainer.appendChild(chipsContainer);
+                }
+                if (langSwitcher) { const langContainer = document.createElement('div'); langContainer.className = 'language-switcher'; const langChip = document.createElement('div'); langChip.className = 'chip lang-chip'; langChip.textContent = langSwitcher.text; langChip.onclick = () => setLanguage(langSwitcher.lang); langContainer.appendChild(langChip); messageContainer.appendChild(langContainer); }
+                const messageTime = document.createElement('div'); messageTime.className = 'message-time'; messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); messageContainer.appendChild(messageTime);
+                messageWrapper.innerHTML = avatarHtml; messageWrapper.appendChild(messageContainer);
+                chatMessages.appendChild(messageWrapper); scrollToBottom();
+            }
+            function showTypingIndicator() { const indicatorHtml = `<div class="message-wrapper bot-message-wrapper" id="typing-indicator"><div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div></div>`; chatMessages.insertAdjacentHTML('beforeend', indicatorHtml); scrollToBottom(); }
+            function removeTypingIndicator() { const indicator = document.getElementById('typing-indicator'); if (indicator) indicator.remove(); }
+            function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-        const content = document.createElement('div');
-        content.className = 'message-content ' + (sender === 'bot' ? 'bot-message-content' : 'user-message-content');
-
-        if (sender === 'bot') {
-          content.innerHTML = message; // allows HTML links in bot messages
-        } else {
-          content.textContent = message;
-        }
-
-        container.appendChild(content);
-
-        if (sender === 'bot') {
-          const avatar = document.createElement('div');
-          avatar.className = 'bot-avatar';
-          avatar.textContent = 'S';
-          wrapper.appendChild(avatar);
-        }
-
-        wrapper.appendChild(container);
-        chatMessages.appendChild(wrapper);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-
-      chatInputForm.onsubmit = e => {
-        e.preventDefault();
-        const text = userInput.value.trim();
-        if (!text) return;
-        appendMessage('user', text);
-        userInput.value = '';
-        setTimeout(() => {
-          const response = getResponseForInput(text);
-          appendMessage('bot', response);
-        }, 500);
-      };
-
-      // Initial greeting
-      appendMessage('bot', "Hello! Ask me anything about Coen Zweers’ CV, including his experience, education, skills, certifications, and internships.");
-    });
-  </script>
+            setLanguage(currentLanguage);
+        });
+    </script>
 </body>
 </html>
