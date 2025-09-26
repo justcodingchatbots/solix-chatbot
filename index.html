@@ -18,13 +18,13 @@
             --border-radius-sm: 8px;
         }
 
-        /* Core layout for full-screen */
+        /* --- Default Mobile-First Styles (Full Screen) --- */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Prevents scrollbars on the iframe */
+            overflow: hidden;
             font-family: var(--font-family);
             background-color: transparent;
         }
@@ -36,7 +36,32 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            /* Style for desktop view will be added in the media query below */
         }
+        
+        /* --- START: NEW Responsive Desktop Styles --- */
+        /* These styles only apply to screens wider than 768px */
+        @media (min-width: 768px) {
+            body {
+                /* Center the chatbot container on the page */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px; /* Adds some space around the chatbot */
+                box-sizing: border-box;
+            }
+
+            #chatbot-container {
+                /* On desktop, constrain the size to look like a panel */
+                max-width: 480px;
+                height: 85%;
+                max-height: 750px;
+                border-radius: var(--border-radius-lg);
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            }
+        }
+        /* --- END: NEW Responsive Desktop Styles --- */
+
 
         #chat-header {
             background-color: var(--primary-color);
@@ -70,7 +95,7 @@
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
-            min-height: 0; /* ADDED: Improves flexbox resilience */
+            min-height: 0;
         }
         
         .message-wrapper {
@@ -225,7 +250,6 @@
 
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <script>
-        // MODIFIED: Switched to the 'load' event to fix Google Sites embed issue
         window.addEventListener('load', () => {
             const chatInputForm = document.getElementById('chat-input-form');
             const userInput = document.getElementById('user-input');
@@ -243,7 +267,7 @@
 
             function startConversation() {
                 const welcomeMessage = {
-                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:34 PM in Amsterdam. How can I help you today?`,
+                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:38 PM in Amsterdam. How can I help you today?`,
                     chips: ["What services does Solix offer?", "Tell me about Coen's experience", "Book an introduction"]
                 };
                 appendMessage('bot', welcomeMessage);
@@ -260,32 +284,26 @@
 
             function appendMessage(sender, response) {
                 const { text, chips = [], htmlContent = null } = response;
-
                 const messageWrapper = document.createElement('div');
                 messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
-                
                 let avatarHtml = '';
                 if (sender === 'bot') {
                     avatarHtml = '<div class="bot-avatar">S</div>';
                 }
-
                 const messageContainer = document.createElement('div');
                 messageContainer.className = 'message-container';
-                
                 if (text) {
                     const messageContent = document.createElement('div');
                     messageContent.className = `message-content ${sender}-message-content`;
                     messageContent.innerHTML = text;
                     messageContainer.appendChild(messageContent);
                 }
-                
                 if (htmlContent) {
                     const embedContainer = document.createElement('div');
                     embedContainer.className = 'calendly-embed-container';
                     embedContainer.innerHTML = htmlContent;
                     messageContainer.appendChild(embedContainer);
                 }
-
                 if (chips.length > 0) {
                     const chipsContainer = document.createElement('div');
                     chipsContainer.className = 'suggestion-chips';
@@ -304,12 +322,10 @@
                     });
                     messageContainer.appendChild(chipsContainer);
                 }
-
                 const messageTime = document.createElement('div');
                 messageTime.className = 'message-time';
                 messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 messageContainer.appendChild(messageTime);
-                
                 messageWrapper.innerHTML = avatarHtml;
                 messageWrapper.appendChild(messageContainer);
                 chatMessages.appendChild(messageWrapper);
@@ -341,7 +357,6 @@
 
             function getBotResponse(userText) {
                 const text = userText.toLowerCase();
-
                 const contactIntent = {
                     keywords: ['contact', 'email', 'book', 'call', 'available', 'touch'],
                     response: {
@@ -350,9 +365,9 @@
                         chips: ["What are your services?", "Thanks!"]
                     }
                 };
-                
                 const fullIntents = [
                     contactIntent,
+                    // ... other intents ...
                     {
                         keywords: ['solix', 'company', 'about you'],
                         response: {
@@ -376,11 +391,11 @@
                     },
                     {
                         keywords: ['leadership'],
-                        response: { text: `Coen has recently served as <strong>Head of Business Services (a.i.) at elipsLife</strong>, where he led a team of seven and managed a major international ERP system implementation. This demonstrates his capability to provide senior-level expertise and ensure business continuity.`, chips: ["Tell me about Sunrock", "How to contact Coen?"]}
+                        response: { text: `Coen has recently served as <strong>Head of Business Services (a.i.) at elipsLife</strong>, where he led a team of seven and managed a major international ERP system implementation.`, chips: ["Tell me about Sunrock", "How to contact Coen?"]}
                     },
                     {
                         keywords: ['product management', 'sunrock', 'product owner'],
-                        response: { text: `As an <strong>IT Product Manager at Sunrock</strong>, Coen led the end-to-end creation of scalable digital products, including a customer portal that increased engagement and a design tool for PV systems. He is skilled in managing backlogs, market research, and working with tools like Figma and Jira.`, chips: ["What about his consulting work?", "What are his certifications?"]}
+                        response: { text: `As an <strong>IT Product Manager at Sunrock</strong>, Coen led the end-to-end creation of scalable digital products, including a customer portal that increased engagement and a design tool for PV systems.`, chips: ["What about his consulting work?", "What are his certifications?"]}
                     },
                     {
                         keywords: ['consulting', 'accenture'],
@@ -402,20 +417,16 @@
                         response: { text: "You're welcome! Feel free to ask if anything else comes to mind. Have a great day!", chips: [] }
                     },
                 ];
-
-
                 for (const intent of fullIntents) {
                     if (intent.keywords.some(keyword => text.includes(keyword))) {
                         return intent.response;
                     }
                 }
-
                 return {
                     text: "I'm best at answering questions about Solix's services, Coen's experience, and how to get in touch. How about we start with one of those?",
                     chips: ["Services", "Experience", "Book an introduction"]
                 };
             }
-
             startConversation();
         });
     </script>
