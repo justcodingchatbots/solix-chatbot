@@ -233,7 +233,7 @@
                 e.preventDefault();
                 const messageText = userInput.value.trim();
                 if (messageText) {
-                    appendMessage(messageText, 'user');
+                    appendMessage({ text: messageText }, 'user');
                     userInput.value = '';
                     handleBotResponse(messageText);
                 }
@@ -242,10 +242,10 @@
             // --- Core Functions ---
             function startConversation() {
                 const welcomeMessage = {
-                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:04 PM in Amsterdam. How can I help you today?`,
+                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:21 PM in Amsterdam. How can I help you today?`,
                     chips: ["What services does Solix offer?", "Tell me about Coen's experience", "How do I get in touch?"]
                 };
-                appendMessage(welcomeMessage.text, 'bot', welcomeMessage.chips);
+                appendMessage(welcomeMessage, 'bot');
             }
 
             function handleBotResponse(userText) {
@@ -253,27 +253,31 @@
                 setTimeout(() => {
                     removeTypingIndicator();
                     const botResponse = getBotResponse(userText);
-                    appendMessage(botResponse.text, 'bot', botResponse.chips);
+                    appendMessage(botResponse, 'bot');
                 }, 1200);
             }
 
             // --- DOM Manipulation ---
-            function appendMessage(text, sender, chips = []) {
+            function appendMessage(response, sender) {
+                const { text, chips = [], htmlContent = null } = response;
+
                 const messageWrapper = document.createElement('div');
                 messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
                 let avatarHtml = '';
                 if (sender === 'bot') {
                     avatarHtml = '<div class="bot-avatar">S</div>';
                 }
+
                 const messageContainer = document.createElement('div');
                 messageContainer.className = 'message-container';
-                const messageContent = document.createElement('div');
-                messageContent.className = `message-content ${sender}-message-content`;
-                messageContent.innerHTML = text;
-                const messageTime = document.createElement('div');
-                messageTime.className = 'message-time';
-                messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                messageContainer.appendChild(messageContent);
+                
+                if (text) {
+                    const messageContent = document.createElement('div');
+                    messageContent.className = `message-content ${sender}-message-content`;
+                    messageContent.innerHTML = text;
+                    messageContainer.appendChild(messageContent);
+                }
+
                 if (chips.length > 0) {
                     const chipsContainer = document.createElement('div');
                     chipsContainer.className = 'suggestion-chips';
@@ -285,14 +289,19 @@
                             chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none');
                             chip.style.backgroundColor = 'var(--primary-color)';
                             chip.style.color = 'var(--font-color)';
-                            appendMessage(chipText, 'user');
+                            appendMessage({ text: chipText }, 'user');
                             handleBotResponse(chipText);
                         };
                         chipsContainer.appendChild(chip);
                     });
                     messageContainer.appendChild(chipsContainer);
                 }
+
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 messageContainer.appendChild(messageTime);
+                
                 messageWrapper.innerHTML = avatarHtml;
                 messageWrapper.appendChild(messageContainer);
                 chatMessages.appendChild(messageWrapper);
@@ -336,6 +345,7 @@
                             chips: ["What are Solix's services?", "Thanks!"]
                         }
                     },
+                    // ... other intents ...
                     {
                         keywords: ['solix', 'company', 'about you'],
                         response: {
@@ -344,63 +354,4 @@
                         }
                     },
                     {
-                        keywords: ['service', 'offer', 'what do you do', 'help with'],
-                        response: {
-                            text: `Solix provides flexible support in four key areas:<br>🚀 Strategic Consultancy Projects<br>👔 Interim Leadership Roles<br>🔄 Change Management<br>⚡ Agile Transformation Workshops<br><br>Which area interests you the most?`,
-                            chips: ["Strategy", "Interim Leadership", "Change Management", "Workshops"]
-                        }
-                    },
-                    {
-                        keywords: ['experience', 'background', 'cv', 'resume', 'worked'],
-                        response: {
-                            text: `Coen has a rich background as a seasoned IT specialist. His experience spans high-level strategy and hands-on execution. To give you the most relevant info, what are you most interested in?<br>`,
-                            chips: ["Leadership Roles", "Product Management", "Consulting (Accenture)"]
-                        }
-                    },
-                    {
-                        keywords: ['leadership'],
-                        response: { text: `Coen has recently served as <strong>Head of Business Services (a.i.) at elipsLife</strong>, where he led a team of seven and managed a major international ERP system implementation. This demonstrates his capability to provide senior-level expertise and ensure business continuity.`, chips: ["Tell me about Sunrock", "How to contact Coen?"]}
-                    },
-                    {
-                        keywords: ['product management', 'sunrock', 'product owner'],
-                        response: { text: `As an <strong>IT Product Manager at Sunrock</strong>, Coen led the end-to-end creation of scalable digital products, including a customer portal that increased engagement and a design tool for PV systems. He is skilled in managing backlogs, market research, and working with tools like Figma and Jira.`, chips: ["What about his consulting work?", "What are his certifications?"]}
-                    },
-                    {
-                        keywords: ['consulting', 'accenture'],
-                        response: { text: `During his four years as a <strong>Strategy & Technology Consultant at Accenture</strong>, Coen delivered projects for major clients like Rabobank, ING, and Athlon. His work involved AI Monitoring, RPA, Blockchain, and developing e-commerce value propositions.`, chips: ["What are his specific skills?", "Book a call"]}
-                    },
-                    {
-                        keywords: ['skill', 'expertise', 'proficient'],
-                        response: {
-                            text: `Coen's core skills include: IT Project Management, Product Management, Agile & Scrum, Change Management, Robotic Process Automation (RPA), and IT Strategy. He is certified as an Advanced Product Owner (PSPO II), Advanced Scrum Master (PSM II), and SAFe Agilist.`,
-                            chips: ["Tell me about his experience", "How do I get in touch?"]
-                        }
-                    },
-                    {
-                        keywords: ['hello', 'hi', 'hey'],
-                        response: { text: "Hello there! How can I help you learn more about Solix and what Coen can offer?", chips: ["Services", "Experience", "Contact"] }
-                    },
-                    {
-                        keywords: ['thanks', 'thank you', 'bye', 'ok'],
-                        response: { text: "You're welcome! Feel free to ask if anything else comes to mind. Have a great day!", chips: [] }
-                    },
-                ];
-
-                for (const intent of intents) {
-                    if (intent.keywords.some(keyword => text.includes(keyword))) {
-                        return intent.response;
-                    }
-                }
-
-                return {
-                    text: "I'm best at answering questions about Solix's services, Coen's experience, and how to get in touch. How about we start with one of those?",
-                    chips: ["Services", "Experience", "Contact"]
-                };
-            }
-
-            // Start the conversation as soon as the page loads
-            startConversation();
-        });
-    </script>
-</body>
-</html>
+                        keywords: ['service', '
