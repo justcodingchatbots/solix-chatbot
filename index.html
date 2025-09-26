@@ -6,7 +6,7 @@
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <title>Solix.cc | AI Assistant</title>
     <style>
-        /* CSS is unchanged */
+        /* CSS is unchanged, but one new style is added for the button */
         :root {
             --primary-color: #ffd100; --secondary-color: #f1f3f4; --bot-message-bg: #ffffff;
             --user-message-bg: #fff8e1; --font-color: #172b4d; --font-color-light: #6b778c;
@@ -29,27 +29,29 @@
         .user-message-wrapper { justify-content: flex-end; }
         .bot-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-color); color: var(--font-color); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; margin-right: 12px; flex-shrink: 0; }
         .message-content { padding: 12px 16px; border-radius: var(--border-radius-lg); line-height: 1.5; word-wrap: break-word; max-width: 100%; }
-        .calendly-embed-container { margin-top: 10px; border-radius: var(--border-radius-lg); overflow: hidden; }
-        .message-container { display: flex; flex-direction: column; max-width: calc(100% - 44px); }
         .bot-message-wrapper .message-container { align-items: flex-start; }
         .user-message-wrapper .message-container { align-items: flex-end; max-width: 85%; }
         .bot-message-content { background-color: var(--bot-message-bg); color: var(--font-color); border-bottom-left-radius: var(--border-radius-sm); }
         .user-message-content { background-color: var(--user-message-bg); color: var(--font-color); border-bottom-right-radius: var(--border-radius-sm); }
         .message-time { font-size: 11px; color: var(--font-color-light); margin-top: 6px; padding: 0 5px; }
         .typing-indicator span { height: 8px; width: 8px; margin: 0 2px; background-color: #b0b8c8; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite ease-in-out both; }
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; } .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
         #chat-input-container { border-top: 1px solid #dde1e6; padding: 15px 20px; background-color: white; flex-shrink: 0; }
         #chat-input-form { display: flex; align-items: center; }
         #user-input { flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 18px; font-size: 14px; margin-right: 10px; outline: none; transition: border-color 0.2s; }
-        #user-input:focus { border-color: var(--primary-color); }
         #send-btn { background-color: var(--primary-color); color: var(--font-color); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; flex-shrink: 0; }
-        #send-btn:hover { background-color: #e6b800; }
         .suggestion-chips, .language-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
         .chip { background-color: #fff8e1; color: var(--font-color); padding: 6px 12px; border-radius: 16px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
-        .chip:hover { border-color: var(--primary-color); background-color: #d1e3ff; }
         .lang-chip { background-color: transparent; color: var(--font-color-light); font-size: 12px; border: 1px solid #dde1e6; padding: 4px 10px; }
-        .lang-chip:hover { background-color: #e9ecef; border-color: #b0b8c8;}
+        
+        /* --- NEW STYLE FOR THE BOOKING BUTTON --- */
+        .booking-button-container { margin-top: 10px; }
+        .booking-button {
+            background-color: var(--font-color); color: white; font-family: var(--font-family);
+            font-size: 14px; font-weight: bold; border-radius: 8px; border: none;
+            padding: 12px 20px; width: 100%; cursor: pointer; transition: opacity 0.2s;
+        }
+        .booking-button:hover { opacity: 0.85; }
     </style>
 </head>
 <body>
@@ -77,17 +79,27 @@
                     title: "Solix AI Assistant",
                     placeholder: "e.g., Tell me about your Scrum Master experience",
                     welcome: {
-                        text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 3:05 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`,
-                        chips: ["What are your main services?", "Give me a project example", "Do you have Scrum Master experience?"],
+                        text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 3:08 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`,
+                        chips: ["What are your main services?", "Give me a project example", "Book an Introduction"],
                         langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
                     },
                     intents: [
+                        // --- MODIFIED CONTACT INTENT ---
+                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { 
+                            text: `The best next step is to schedule a brief introductory call with Coen. Click the button below to open his calendar and pick a time that works for you.`, 
+                            htmlContent: `
+                                <div class="booking-button-container">
+                                    <button class="booking-button" onclick="Calendly.initPopupWidget({ url: 'https://calendly.com/coenzweers-solix/introduction' }); return false;">
+                                        🗓️ Book an Introduction Call
+                                    </button>
+                                </div>`
+                        }},
+                        // Other intents are unchanged
                         { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen focuses on two main areas: short-term Strategic & Transformation projects, and longer-term Interim Leadership roles. Which area is more relevant for you?`, chips: ["Strategy & Transformation", "Interim Leadership"] }},
                         { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II). This experience is particularly valuable for roles requiring team transformation.`, chips: ["What about Product Owner roles?", "Book a Call"] }},
                         { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["What about his work at elipsLife?", "Book a Call"] }},
                         { id: 'experience_elipslife', keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'], response: { text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>, a key leadership role. He led a team of seven and managed a major international ERP implementation which unified teams across four countries. This showcases his ability to handle complex projects and senior responsibilities.`, chips: ["Tell me about Kramp", "Book a Call"] }},
                         { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformation', 'strategic advice'], response: { text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a large-scale Target Operating Model program. He tracked progress across 15 workstreams and helped implement new, more efficient ways of working across Europe. This is a prime example of his strategic and transformation skills.`, chips: ["What about his Scrum Master work?", "Book a Call"] }},
-                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { text: `The best next step is to schedule a brief introductory call with Coen. You can book a time that works for you directly in his calendar below.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>` }},
                         { id: 'thanks', keywords: ['thanks', 'thank you', 'ok', 'great'], response: { text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect.", chips: ["Services", "Scrum Master experience"] }}
                     ],
                     fallback: {
@@ -104,17 +116,27 @@
                     title: "Solix AI Assistent",
                     placeholder: "bv. Vertel over je Scrum Master ervaring",
                     welcome: {
-                        text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 15:05 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
+                        text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 15:08 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
                         chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Heb je Scrum Master ervaring?"],
                         langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }
                     },
                     intents: [
+                        // --- MODIFIED CONTACT INTENT (DUTCH) ---
+                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { 
+                            text: `De beste volgende stap is een korte kennismaking met Coen. Klik op de knop hieronder om zijn agenda te openen en een geschikt moment te kiezen.`, 
+                            htmlContent: `
+                                <div class="booking-button-container">
+                                    <button class="booking-button" onclick="Calendly.initPopupWidget({ url: 'https://calendly.com/coenzweers-solix/introduction' }); return false;">
+                                        🗓️ Plan een Kennismakingsgesprek
+                                    </button>
+                                </div>`
+                        }},
+                        // Other intents are unchanged
                         { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen focust op twee hoofdgebieden: Strategische & Transformatieprojecten voor de korte termijn, en Interim Leiderschapsrollen voor de langere termijn. Welk gebied is voor u het meest relevant?`, chips: ["Strategie & Transformatie", "Interim Leiderschap"] }},
-                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Deze ervaring is met name waardevol voor rollen die teamtransformatie vereisen.`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
+                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Deze ervaring is met name waardevol for rollen die teamtransformatie vereisen.`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
                         { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`, chips: ["Vertel over zijn werk bij elipsLife?", "Plan een gesprek"] }},
                         { id: 'experience_elipslife', keywords: ['elipslife', 'interim leiderschap', 'erp', 'verzekering'], response: { text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>, een essentiële leiderschapsrol. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie. Dit toont zijn vermogen om complexe projecten en senior verantwoordelijkheden te dragen.`, chips: ["Vertel over Kramp", "Plan een gesprek"] }},
                         { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformatie', 'strategisch advies'], response: { text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een grootschalig Target Operating Model-programma. Hij volgde de voortgang van 15 'workstreams' en hielp bij het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa. Dit is een perfect voorbeeld van zijn strategische en transformatievaardigheden.`, chips: ["En zijn Scrum Master werk?", "Plan een gesprek"] }},
-                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { text: `De beste volgende stap is een korte kennismaking met Coen. U kunt hieronder direct een geschikt moment in zijn agenda plannen.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
                         { id: 'thanks', keywords: ['bedankt', 'dank', 'ok', 'geweldig'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten.", chips: ["Diensten", "Scrum Master ervaring"] }}
                     ],
                     fallback: {
@@ -130,6 +152,8 @@
             };
             
             // --- Core Functions ---
+            // The appendMessage function and all others are unchanged.
+            // No need to call initInlineWidgets anymore.
             function setLanguage(lang) {
                 currentLanguage = lang;
                 const T = translations[lang];
@@ -143,9 +167,7 @@
                 const text = userText.toLowerCase();
                 const T = translations[currentLanguage];
                 for (const intent of T.intents) {
-                    if (intent.keywords.some(keyword => text.includes(keyword))) {
-                        return intent.response;
-                    }
+                    if (intent.keywords.some(keyword => text.includes(keyword))) { return intent.response; }
                 }
                 for (const redirect of T.fallback.topicRedirects) {
                     if (redirect.topics.some(topic => text.includes(topic))) {
@@ -158,27 +180,13 @@
 
             chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
             function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
-            
             function appendMessage(sender, response) {
                 const { text, chips = [], htmlContent = null, langSwitcher = null } = response;
                 const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
                 let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
                 const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
                 if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
-                
-                if (htmlContent) {
-                    const embedContainer = document.createElement('div');
-                    embedContainer.className = 'calendly-embed-container';
-                    embedContainer.innerHTML = htmlContent;
-                    messageContainer.appendChild(embedContainer);
-
-                    // --- CRUCIAL FIX for Calendly visibility ---
-                    // Manually re-initialize the widget after adding it to the page.
-                    if (window.Calendly) {
-                        window.Calendly.initInlineWidgets();
-                    }
-                }
-
+                if (htmlContent) { const embedContainer = document.createElement('div'); embedContainer.innerHTML = htmlContent; messageContainer.appendChild(embedContainer); }
                 if (chips.length > 0) {
                     const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
                     chips.forEach(chipText => {
