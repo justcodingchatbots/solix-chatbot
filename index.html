@@ -40,11 +40,6 @@
         #chat-input-form { display: flex; align-items: center; }
         #user-input { flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 18px; font-size: 14px; margin-right: 10px; outline: none; transition: border-color 0.2s; }
         #send-btn { background-color: var(--primary-color); color: var(--font-color); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; flex-shrink: 0; }
-        .suggestion-chips, .language-switcher { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .chip { background-color: #fff8e1; color: var(--font-color); padding: 6px 12px; border-radius: 16px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
-        .lang-chip { background-color: transparent; color: var(--font-color-light); font-size: 12px; border: 1px solid #dde1e6; padding: 4px 10px; }
-        .booking-link { color: #c7a100; font-weight: bold; text-decoration: underline; }
-        .booking-link:hover { color: #997b00; }
     </style>
 </head>
 <body>
@@ -53,7 +48,7 @@
         <div id="chat-messages"></div>
         <div id="chat-input-container">
             <form id="chat-input-form">
-                <input type="text" id="user-input" autocomplete="off"><button type="submit" id="send-btn">&#10148;</button>
+                <input type="text" id="user-input" placeholder="Ask anything about Coen's CV..." autocomplete="off"><button type="submit" id="send-btn">&#10148;</button>
             </form>
         </div>
     </div>
@@ -62,112 +57,86 @@
             const chatInputForm = document.getElementById('chat-input-form');
             const userInput = document.getElementById('user-input');
             const chatMessages = document.getElementById('chat-messages');
-            const chatTitle = document.getElementById('chat-title');
-
-            let currentLanguage = navigator.language.startsWith('nl') ? 'nl' : 'en';
-
-            const translations = {
-                en: {
-                    title: "Solix AI Assistant",
-                    placeholder: "Ask about skills, clients, or projects...",
-                    welcome: { text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 8:47 PM in Amsterdam. I am trained on his CV and can answer specific questions about skills, projects, and services. How can I help?`, chips: ["What are your services?", "What are your certifications?", "What's your hourly rate?"], langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }},
-                    intents: [
-                        // --- NEW & UPDATED INTENTS BASED ON CV/FAQ ---
-                        { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen offers four specific services:<br>1. Strategic Consultancy Projects<br>2. Interim Management Roles<br>3. Change Management<br>4. Agile Transformation & Project Management Workshops.<br><br>Which of these would you like to explore further?`, chips: ["Consultancy Projects", "Interim Roles"] }},
-                        { id: 'skills_specialized', keywords: ['skill', 'skills', 'specialized', 'expertise', 'focus'], response: { text: `Coen's main specializations are: <strong>Product Management, IT Project Management, Agile Scrum Transformations, and Management/IT/Strategy Consultancy.</strong>`, chips: ["Tell me about a project", "What software do you use?"] }},
-                        { id: 'skills_software', keywords: ['software', 'tool', 'tools', 'figma', 'jira', 'splunk', 'azure devops', 'servicenow'], response: { text: `He has advanced proficiency in a range of tools including <strong>Jira, Confluence, Figma, Azure DevOps, ServiceNow, and Splunk</strong> for dashboarding.`, chips: ["What are his certifications?", "Tell me about a project"] }},
-                        { id: 'skills_certifications', keywords: ['certificate', 'certificates', 'certification', 'certifications', 'psm', 'pspo', 'safe'], response: { text: `Coen holds several key certifications, including: <strong>PSPO II (Advanced Product Owner), PSM II (Advanced Scrum Master), and SAFe Certified Agilist</strong>. He is also certified in RPA and DLT (Blockchain).`, chips: ["What is your Scrum experience?", "Book a call"] }},
-                        { id: 'experience_industry', keywords: ['industry', 'sector', 'client type', 'financial', 'energy', 'finance'], response: { text: `He has deep expertise in both the <strong>financial and energy sectors</strong>. He began his career at Accenture focusing on finance, and later transitioned to the renewable energy industry with companies like Sunrock.`, chips: ["Tell me about a financial project", "Tell me about an energy project"] }},
-                        { id: 'experience_years', keywords: ['how many years', 'how long', 'since when', 'years of experience'], response: { text: `Coen has been working in the professional IT field since 2016, giving him over <strong>${new Date().getFullYear() - 2016} years</strong> of hands-on experience.`, chips: ["What are his certifications?", "Tell me about a project"] }},
-                        { id: 'experience_examples', keywords: ['example', 'similar project', 'use case', 'portfolio'], response: { text: `A great recent example is his work at <strong>elipsLife</strong>, where as interim Head of Business Services he managed a major international ERP implementation. Another is his work at <strong>ABN AMRO</strong> as an Agile Coach. Which project sounds more interesting to you?`, chips: ["elipsLife (Project Management)", "ABN AMRO (Agile Coach)"] }},
-                        { id: 'work_hours', keywords: ['hours', 'how many hours', 'availability', 'overtime', 'full time', 'part time'], response: { text: `He typically works a standard <strong>40-hour week</strong> and does not charge for overtime.`, chips: ["What is your hourly rate?", "Where do you work?"] }},
-                        { id: 'work_location', keywords: ['where', 'location', 'amsterdam', 'utrecht', 'hague', 'remote', 'work from home'], response: { text: `His preference is for projects near <strong>Amsterdam, The Hague, or Utrecht</strong>, but he is flexible, especially if remote work is possible.`, chips: ["How many hours a week?", "Book a call"] }},
-                        { id: 'references', keywords: ['references', 'recommendations', 'referral'], response: { text: `Of course. For reference contact details, please send a direct request to <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a> and Coen will be happy to provide them.`, chips: ["Book a Call", "Ask another question"] }},
-                        { id: 'rate', keywords: ['rate', 'hourly rate', 'cost', 'price', 'tarieven', 'fees', 'charge'], response: { text: `Coen's hourly rate depends on the scope and duration of the assignment. For an accurate quote, the best approach is to book a short, introductory call to discuss your project.`, chips: ["Book an Introduction Call", "What are your skills?"] }},
-                        { id: 'insurance', keywords: ['insurance', 'liability', 'indemnity', 'insured'], response: { text: `Yes, as a professional freelancer, Coen has comprehensive insurance coverage, including professional indemnity, disability, and business liability insurance.`, chips: ["What is your hourly rate?", "Book a call"] }},
-                        { id: 'education', keywords: ['education', 'degree', 'msc', 'university'], response: { text: `Coen holds an <strong>MSc in Marketing Analytics and Data Science</strong> from the University of Groningen, as well as a BSc in Industrial Engineering & Management.`, chips: ["What are his certifications?", "What is his industry experience?"] }},
-                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'touch', 'email'], response: { text: `The most effective way to connect is to schedule a brief introductory call. You can book a time directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Book an Introduction Call</a><br><br>Alternatively, you can send a direct email to:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`, chips: ["What are the services?", "Thanks!"] }}
-                    ],
-                    fallback: { text: `I couldn't find a specific detail for that query. However, Coen is a seasoned IT specialist focusing on <strong>Product Management, IT Project Management, and Agile Transformations</strong>. For specific questions, the best way to get a complete answer is to reach out directly.`, chips: ["Book an Introduction Call", "Send a direct email"] }
-                },
-                nl: {
-                    title: "Solix AI Assistent",
-                    placeholder: "Vraag naar skills, tarieven of projecten...",
-                    welcome: { text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 20:47 in Amsterdam. Ik ben getraind op zijn CV en kan specifieke vragen beantwoorden over vaardigheden, projecten en diensten. Hoe kan ik helpen?`, chips: ["Wat zijn uw skills?", "Wat is uw branche-ervaring?", "Wat is uw tarief?"], langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }},
-                    intents: [
-                        // --- DUTCH TRANSLATIONS OF ALL NEW INTENTS ---
-                        { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen biedt vier specifieke diensten:<br>1. Strategische Consultancy Projecten<br>2. Interim Management Rollen<br>3. Verandermanagement<br>4. Agile Transformatie & Projectmanagement Workshops.<br><br>Welke hiervan wilt u verder verkennen?`, chips: ["Consultancy Projecten", "Interim Rollen"] }},
-                        { id: 'skills_specialized', keywords: ['skill', 'skills', 'specialisatie', 'expertise', 'focus', 'vaardigheden'], response: { text: `Coens belangrijkste specialisaties zijn: <strong>Product Management, IT Project Management, Agile Scrum Transformaties, en Management/IT/Strategie Consultancy.</strong>`, chips: ["Vertel over een project", "Wat is uw uurtarief?"] }},
-                        { id: 'skills_software', keywords: ['software', 'tool', 'tools', 'figma', 'jira', 'splunk', 'azure devops', 'servicenow'], response: { text: `Hij heeft geavanceerde kennis van een reeks tools, waaronder <strong>Jira, Confluence, Figma, Azure DevOps, ServiceNow en Splunk</strong> voor dashboarding.`, chips: ["Wat zijn de certificaten?", "Vertel over een project"] }},
-                        { id: 'skills_certifications', keywords: ['certificaat', 'certificaten', 'certificering', 'psm', 'pspo', 'safe'], response: { text: `Coen heeft diverse belangrijke certificeringen, waaronder: <strong>PSPO II (Advanced Product Owner), PSM II (Advanced Scrum Master), en SAFe Certified Agilist</strong>. Hij is ook gecertificeerd in RPA en DLT (Blockchain).`, chips: ["Wat is uw Scrum-ervaring?", "Plan een gesprek"] }},
-                        { id: 'experience_industry', keywords: ['industrie', 'sector', 'klanttype', 'financieel', 'energie', 'financiële'], response: { text: `Hij heeft diepgaande expertise in zowel de <strong>financiële als de energiesector</strong>. Zijn carrière begon bij Accenture met een focus op finance, en later is hij als freelancer overgestapt naar de duurzame energiesector bij bedrijven als Sunrock.`, chips: ["Vertel over een financieel project", "Vertel over een energieproject"] }},
-                        { id: 'experience_years', keywords: ['hoeveel jaar', 'hoe lang', 'sinds wanneer', 'jaren ervaring'], response: { text: `Coen is sinds 2016 professioneel werkzaam in het IT-vakgebied, wat hem meer dan <strong>${new Date().getFullYear() - 2016} jaar</strong> praktijkervaring geeft.`, chips: ["Wat zijn de belangrijkste skills?", "Vertel over een project"] }},
-                        { id: 'experience_examples', keywords: ['voorbeeld', 'vergelijkbaar project', 'case'], response: { text: `Zeker. Een goed recent voorbeeld is zijn werk bij <strong>elipsLife</strong>, waar hij als interim Hoofd Business Services een grote internationale ERP-implementatie heeft geleid. Een ander voorbeeld is zijn rol als Agile Coach bij <strong>ABN AMRO</strong>. Welk project klinkt interessanter?`, chips: ["elipsLife (Projectmanagement)", "ABN AMRO (Agile Coach)"] }},
-                        { id: 'work_hours', keywords: ['uren', 'hoeveel uur', 'beschikbaarheid', 'overuren', 'fulltime', 'parttime'], response: { text: `Hij werkt doorgaans een standaardwerkweek van <strong>40 uur</strong> en rekent geen overuren.`, chips: ["Wat is uw uurtarief?", "Waar werkt u?"] }},
-                        { id: 'work_location', keywords: ['waar', 'locatie', 'amsterdam', 'utrecht', 'den haag', 'thuiswerken'], response: { text: `Zijn voorkeur gaat uit naar opdrachten in de buurt van <strong>Amsterdam, Den Haag of Utrecht</strong>, maar hij is flexibel, zeker als thuiswerken een optie is.`, chips: ["Hoeveel uur per week?", "Plan een gesprek"] }},
-                        { id: 'references', keywords: ['referenties', 'aanbevelingen'], response: { text: `Uiteraard. Voor contactgegevens van referenties kunt u een verzoek sturen naar <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>, dan zal Coen deze verstrekken.`, chips: ["Plan een gesprek", "Stel een andere vraag"] }},
-                        { id: 'rate', keywords: ['uurtarief', 'tarief', 'kosten', 'prijs', 'kost'], response: { text: `Het uurtarief van Coen is afhankelijk van de opdracht. Voor een precieze prijsopgave kunt u het beste een kort kennismakingsgesprek inplannen om de wensen te bespreken.`, chips: ["Plan een Kennismakingsgesprek", "Wat zijn uw skills?"] }},
-                        { id: 'insurance', keywords: ['verzekering', 'verzekerd', 'aansprakelijkheid'], response: { text: `Ja, als professioneel freelancer heeft Coen een uitgebreid verzekeringspakket, inclusief een beroepsaansprakelijkheids-, arbeidsongeschiktheids- en bedrijfsaansprakelijkheidsverzekering.`, chips: ["Wat is uw tarief?", "Plan een gesprek"] }},
-                        { id: 'education', keywords: ['opleiding', 'diploma', 'msc', 'universiteit'], response: { text: `Coen heeft een <strong>MSc in Marketing Analytics and Data Science</strong> van de Rijksuniversiteit Groningen, en een BSc in Industrial Engineering & Management.`, chips: ["Wat zijn de certificaten?", "Wat is zijn branche-ervaring?"] }},
-                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak', 'e-mail'], response: { text: `De meest effectieve manier om een gesprek te starten is door een kennismaking in te plannen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Plan een Kennismakingsgesprek</a><br><br>U kunt ook direct een e-mail sturen naar:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`, chips: ["Wat zijn de diensten?", "Bedankt!"] }}
-                    ],
-                    fallback: { text: `Ik kan daar geen specifiek detail over vinden. Wel kan ik u vertellen dat Coen een ervaren IT-specialist is met focus op <strong>Product Management, IT Project Management en Agile Transformaties</strong>. Voor specifieke vragen kunt u het beste direct contact opnemen.`, chips: ["Plan een Kennismakingsgesprek", "Stuur een directe e-mail"] }
-                }
-            };
             
-            // --- Core Functions (No changes needed in logic) ---
-            function setLanguage(lang) {
-                currentLanguage = lang;
-                const T = translations[lang];
-                chatTitle.textContent = T.title;
-                userInput.placeholder = T.placeholder;
-                chatMessages.innerHTML = '';
-                appendMessage('bot', T.welcome);
+            const BACKEND_URL = 'https://solix-chatbot-backend-516351558691.europe-west4.run.app/'; 
+
+            function startConversation() {
+                const welcomeMessage = `Hello! I'm the AI assistant for Coen Zweers, powered by Gemini. It's currently 10:03 PM in Amsterdam. Feel free to ask me any specific questions you have about his skills and experience.`;
+                appendMessage(welcomeMessage, 'bot');
             }
 
-            function getBotResponse(userText) {
-                const text = userText.toLowerCase();
-                const T = translations[currentLanguage];
-                let scores = [];
-                T.intents.forEach(intent => {
-                    let score = 0;
-                    intent.keywords.forEach(keyword => { if (text.includes(keyword)) score++; });
-                    if (score > 0) scores.push({ intent: intent, score: score });
-                });
-                if (scores.length > 0) {
-                    scores.sort((a, b) => b.score - a.score);
-                    return scores[0].intent.response;
+            chatInputForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const messageText = userInput.value.trim();
+                if (messageText) {
+                    appendMessage(messageText, 'user');
+                    userInput.value = '';
+                    handleBotResponse(messageText);
                 }
-                return T.fallback;
-            }
+            });
+            
+            async function handleBotResponse(userText) {
+                showTypingIndicator();
 
-            chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
-            function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
-            function appendMessage(sender, response) {
-                const { text, chips = [], langSwitcher = null } = response;
-                const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
-                let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
-                const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
-                if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
-                if (chips.length > 0) {
-                    const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
-                    chips.forEach(chipText => {
-                        const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = chipText;
-                        chip.onclick = () => { chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none'); chip.style.backgroundColor = 'var(--primary-color)'; chip.style.color = 'var(--font-color)'; appendMessage('user', { text: chipText }); handleBotResponse(chipText); };
-                        chipsContainer.appendChild(chip);
+                if (!BACKEND_URL.startsWith('https://')) {
+                     removeTypingIndicator();
+                     appendMessage("Error: The backend URL is not configured correctly. Please replace the placeholder URL in the code.", 'bot');
+                     return;
+                }
+
+                try {
+                    const response = await fetch(BACKEND_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: userText })
                     });
-                    messageContainer.appendChild(chipsContainer);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    removeTypingIndicator();
+                    appendMessage(data.reply, 'bot');
+
+                } catch (error) {
+                    console.error("Error fetching from backend:", error);
+                    removeTypingIndicator();
+                    appendMessage("I'm having trouble connecting to my AI brain right now. Please check the backend configuration or try again in a moment.", 'bot');
                 }
-                if (langSwitcher) { const langContainer = document.createElement('div'); langContainer.className = 'language-switcher'; const langChip = document.createElement('div'); langChip.className = 'chip lang-chip'; langChip.textContent = langSwitcher.text; langChip.onclick = () => setLanguage(langSwitcher.lang); langContainer.appendChild(langChip); messageContainer.appendChild(langContainer); }
-                const messageTime = document.createElement('div'); messageTime.className = 'message-time'; messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); messageContainer.appendChild(messageTime);
-                messageWrapper.innerHTML = avatarHtml; messageWrapper.appendChild(messageContainer);
-                chatMessages.appendChild(messageWrapper); scrollToBottom();
             }
+
+            function appendMessage(text, sender) {
+                const messageWrapper = document.createElement('div');
+                messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
+                let avatarHtml = '';
+                if (sender === 'bot') {
+                    avatarHtml = '<div class="bot-avatar">S</div>';
+                }
+                const messageContainer = document.createElement('div');
+                messageContainer.className = 'message-container';
+                const messageContent = document.createElement('div');
+                messageContent.className = `message-content ${sender}-message-content`;
+                // Basic Markdown for bolding and new lines
+                let formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                formattedText = formattedText.replace(/\n/g, '<br>');
+                messageContent.innerHTML = formattedText;
+                messageContainer.appendChild(messageContent);
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                messageContainer.appendChild(messageTime);
+                messageWrapper.innerHTML = avatarHtml;
+                messageWrapper.appendChild(messageContainer);
+                chatMessages.appendChild(messageWrapper);
+                scrollToBottom();
+            }
+
             function showTypingIndicator() { const indicatorHtml = `<div class="message-wrapper bot-message-wrapper" id="typing-indicator"><div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div></div>`; chatMessages.insertAdjacentHTML('beforeend', indicatorHtml); scrollToBottom(); }
             function removeTypingIndicator() { const indicator = document.getElementById('typing-indicator'); if (indicator) indicator.remove(); }
             function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
 
-            setLanguage(currentLanguage);
+            startConversation();
         });
     </script>
 </body>
