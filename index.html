@@ -294,7 +294,6 @@
             let conversationStarted = false;
 
             // --- Event Listeners ---
-            chatbotOpener.addEventListener('click', toggleChatbot);
             closeBtn.addEventListener('click', toggleChatbot);
 
             chatInputForm.addEventListener('submit', (e) => {
@@ -318,7 +317,7 @@
 
             function startConversation() {
                 const welcomeMessage = {
-                    text: "Welcome to Solix.cc! I'm the digital assistant for Coen Zweers, an energetic and results-driven IT specialist. How can I help you today?",
+                    text: "Welcome to Solix.cc! I'm the AI assistant for Coen Zweers, an energetic and results-driven IT specialist. How can I help you today?",
                     chips: ["What services does Solix offer?", "Tell me about Coen's experience", "How do I get in touch?"]
                 };
                 appendMessage(welcomeMessage.text, 'bot', welcomeMessage.chips);
@@ -333,7 +332,7 @@
                 }, 1200);
             }
             
-            // --- Draggable Chatbot Logic ---
+            // --- START: Draggable Chat Window Logic ---
             let isDragging = false;
             let offsetX, offsetY;
 
@@ -394,6 +393,82 @@
 
             chatHeader.addEventListener('mousedown', dragStart);
             chatHeader.addEventListener('touchstart', dragStart, { passive: false });
+            // --- END: Draggable Chat Window Logic ---
+
+            // --- START: Draggable & Clickable Chatbot Opener Logic ---
+            let isOpenerDragging = false;
+            let openerMovedSinceMouseDown = false;
+            let openerOffsetX, openerOffsetY;
+
+            const openerDragStart = (e) => {
+                openerMovedSinceMouseDown = false;
+                isOpenerDragging = true;
+                chatbotOpener.style.cursor = 'grabbing';
+                document.body.style.userSelect = 'none';
+
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+
+                const rect = chatbotOpener.getBoundingClientRect();
+                if (!chatbotOpener.style.top) {
+                    chatbotOpener.style.top = `${rect.top}px`;
+                    chatbotOpener.style.left = `${rect.left}px`;
+                    chatbotOpener.style.right = '';
+                    chatbotOpener.style.bottom = '';
+                }
+
+                openerOffsetX = clientX - chatbotOpener.offsetLeft;
+                openerOffsetY = clientY - chatbotOpener.offsetTop;
+
+                document.addEventListener('mousemove', openerDragging);
+                document.addEventListener('mouseup', openerDragEnd);
+                document.addEventListener('touchmove', openerDragging, { passive: false });
+                document.addEventListener('touchend', openerDragEnd);
+            };
+
+            const openerDragging = (e) => {
+                if (!isOpenerDragging) return;
+                openerMovedSinceMouseDown = true;
+                e.preventDefault();
+
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+
+                let newLeft = clientX - openerOffsetX;
+                let newTop = clientY - openerOffsetY;
+
+                const openerWidth = chatbotOpener.offsetWidth;
+                const openerHeight = chatbotOpener.offsetHeight;
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - openerWidth));
+                newTop = Math.max(0, Math.min(newTop, window.innerHeight - openerHeight));
+
+                chatbotOpener.style.left = `${newLeft}px`;
+                chatbotOpener.style.top = `${newTop}px`;
+            };
+
+            const openerDragEnd = () => {
+                isOpenerDragging = false;
+                chatbotOpener.style.cursor = 'pointer';
+                document.body.style.userSelect = '';
+
+                document.removeEventListener('mousemove', openerDragging);
+                document.removeEventListener('mouseup', openerDragEnd);
+                document.removeEventListener('touchmove', openerDragging);
+                document.removeEventListener('touchend', openerDragEnd);
+            };
+
+            chatbotOpener.addEventListener('click', (e) => {
+                if (openerMovedSinceMouseDown) {
+                    e.preventDefault();
+                } else {
+                    toggleChatbot();
+                }
+            });
+            
+            chatbotOpener.addEventListener('mousedown', openerDragStart);
+            chatbotOpener.addEventListener('touchstart', openerDragStart, { passive: false });
+             // --- END: Draggable & Clickable Chatbot Opener Logic ---
+
 
             // --- DOM Manipulation ---
             function appendMessage(text, sender, chips = []) {
