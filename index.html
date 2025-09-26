@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Solix.cc | AI Assistant</title>
+  <title>Solix.cc | AI Assistant with CV</title>
   <style>
     :root {
       --primary-color: #ffd100;
@@ -13,6 +13,8 @@
       --font-color: #172b4d;
       --font-color-light: #6b778c;
       --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --border-radius-lg: 0;
+      --border-radius-sm: 0;
     }
     html, body {
       width: 100vw;
@@ -30,9 +32,11 @@
       top: 0; left: 0; right: 0; bottom: 0;
       width: 100vw;
       height: 100dvh;
+      background: var(--secondary-color);
       display: flex;
       flex-direction: column;
-      background: var(--secondary-color);
+      min-height: 0;
+      z-index: 9999;
     }
     #chat-header {
       background-color: var(--primary-color);
@@ -87,7 +91,7 @@
     @keyframes bounce { 0%,80%,100% { transform: scale(0); } 40% { transform: scale(1.0); } }
     #chat-input-container {
       border-top: 1px solid #dde1e6;
-      background: #fff;
+      background-color: #fff;
       padding: 15px 20px;
       flex-shrink: 0;
     }
@@ -123,26 +127,6 @@
       justify-content: center;
       transition: background-color 0.2s;
     }
-    .suggestion-chips, .language-switcher {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
-    }
-    .chip {
-      background-color: #fff8e1;
-      color: var(--font-color);
-      padding: 6px 12px;
-      border-radius: 16px;
-      font-size: 13px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.2s;
-    }
-    .lang-chip {
-      background-color: transparent;
-      color: var(--font-color-light);
-      font-size: 12px;
-      border: 1px solid #dde1e6;
-      padding: 4px 10px;
-    }
   </style>
 </head>
 <body>
@@ -154,13 +138,104 @@
     <div id="chat-messages"></div>
     <div id="chat-input-container">
       <form id="chat-input-form">
-        <input type="text" id="user-input" autocomplete="off" />
+        <input type="text" id="user-input" autocomplete="off" placeholder="Ask me about Coen's skills or project experience" />
         <button type="submit" id="send-btn">➤</button>
       </form>
     </div>
   </div>
   <script>
-    // Your JavaScript logic here (unchanged)
+    window.addEventListener('load', () => {
+      const chatInputForm = document.getElementById('chat-input-form');
+      const userInput = document.getElementById('user-input');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatTitle = document.getElementById('chat-title');
+
+      const knowledgeBase = [
+        {
+          id: 'profile',
+          keywords: ['profile', 'about you', 'summary', 'introduction', 'who are you', 'personality'],
+          response: `Energetic, opportunity spotter and enjoying life to the fullest! Seasoned IT specialist with structured working, people-first mentality and results driven.`
+        },
+        {
+          id: 'elipslife',
+          keywords: ['elipslife', 'head of business services', 'erp project', 'insurance', 'project manager', 'digital products'],
+          response: `At elipsLife (07/2024–07/2025), Coen was Head of Business Services and IT Project Manager. He led a team of seven business experts and project managers focused on servicing the business, process mapping, and developing new digital products. He managed a large ERP system implementation across the Netherlands, Luxembourg, Switzerland, and Poland, with a successful go-live on May 12, 2025. This included a new core insurance platform, finance application platform (FinanceHub), replacement of document generation and archive systems, and migration of the entire portfolio in the Netherlands. He also led strategic project management and change communication.`
+        },
+        {
+          id: 'kramp',
+          keywords: ['kramp', 'pmо', 'transformation', 'target operating model', 'europe', 'change management'],
+          response: `At Kramp (09/2023–06/2024), Coen was Transformation Management Officer (PMO) for the Target Operating Model program, responsible for project management, communication, and change across Europe. He prepared executive board meetings, tracked progress of 15 workstreams and delivered new working methods including a European cluster model and product model structure.`
+        },
+        {
+          id: 'sunrock',
+          keywords: ['sunrock', 'product owner', 'product manager', 'solar parks', 'digital products', 'jira', 'figma'],
+          response: `At Sunrock (06/2022–07/2023), Coen was IT Product Manager and Product Owner in the Innovation & IT department. He led project management and launch of a customer portal and a digital design tool for PV systems including energy and battery storage solutions, boosting customer engagement and revenue. He developed innovation strategy, managed backlogs and tasks in Jira, designed in Figma, and collaborated closely with teams to reduce development time.`
+        },
+        {
+          id: 'abnamro',
+          keywords: ['abn amro', 'agile coach', 'scrum master', 'agile mindset', 'scrum teams', 'retail banking'],
+          response: `At ABN AMRO (09/2021–06/2022), Coen worked as Agile Coach and Scrum Master for three teams totaling 25 members, improving agile ways of working, coordinating scrum ceremonies and replacing product owners temporarily. He also coordinated a monitoring dashboard project to reduce issue detection time.`
+        },
+        {
+          id: 'accenture',
+          keywords: ['accenture', 'strategy consultant', 'product owner', 'rabobank', 'strategy', 'rpa', 'blockchain', 'automation'],
+          response: `From 10/2017 to 08/2021, Coen was a Strategy & Technology Consultant at Accenture with project experience including IT Product Owner for Rabobank's AI Monitoring, Strategy Consultant for Athlon and Nationale Nederlanden, Business Analyst for Rabobank and APG, and Product Owner for ING's RPA and AI automation team. He led deliveries of AI monitoring solutions, process automations, blockchain pension solutions, and fraud management systems.`
+        },
+        {
+          id: 'education',
+          keywords: ['education', 'study', 'university', 'msc', 'bsc', 'marketing analytics', 'industrial engineering', 'exchange'],
+          response: `Coen holds an MSc in Marketing Analytics and Data Science from University of Groningen (2015–2017). He also completed a Pre-MSc Marketing, an international student exchange program at Hanyang University in South Korea, and a BSc in Industrial Engineering & Management from Hanze University Groningen.`
+        },
+        {
+          id: 'skills',
+          keywords: ['skills', 'software', 'certificates', 'languages', 'rpa', 'blockchain', 'scrum', 'product owner'],
+          response: `Key skills include Strategy & Technology Consulting, IT Project Management, Agile Scrum, Product Management, Blockchain & Distributed Ledger Technology, RPA, NLP, and UX. Experienced with MS Office, MS Visio, Automation Anywhere, Jira, Confluence, Azure DevOps, Figma, ServiceNow, Splunk dashboarding. Certified PSPO II, PSM II, SAFe Agilist, SAFe Advanced Scrum Master, Automation Anywhere Advanced RPA Professional, and R3 Corda Developer. Languages: Dutch (native), English (full professional), German (limited).`
+        },
+        {
+          id: 'internships',
+          keywords: ['internship', 'vodafone', 'toll group', 'hooghoudt', 'marketing intelligence', 'supply chain'],
+          response: `Coen completed internships at Vodafone HQ in Marketing Intelligence, Toll Group in supply chain optimisation for Nike, and Hooghoudt Jenever & Gin in production line redesign and operational excellence.`
+        },
+      ];
+
+      // Basic keyword matching (improve as needed)
+      function getResponseForInput(text) {
+        const lower = text.toLowerCase();
+        for (const item of knowledgeBase) {
+          for (const keyword of item.keywords) {
+            if (lower.includes(keyword)) return item.response;
+          }
+        }
+        return "Sorry, I can't answer that specifically yet. Please ask about experience, education, skills, or projects.";
+      }
+
+      function appendMessage(sender, message) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-wrapper ${sender}-message-wrapper`;
+        if (sender === 'bot') {
+          wrapper.innerHTML = `<div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content">${message}</div></div>`;
+        } else {
+          wrapper.innerHTML = `<div class="message-container"><div class="message-content user-message-content">${message}</div></div>`;
+        }
+        chatMessages.appendChild(wrapper);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      chatInputForm.onsubmit = e => {
+        e.preventDefault();
+        const text = userInput.value.trim();
+        if (!text) return;
+        appendMessage('user', text);
+        userInput.value = '';
+        setTimeout(() => {
+          const response = getResponseForInput(text);
+          appendMessage('bot', response);
+        }, 500);
+      };
+
+      // Welcome message
+      appendMessage('bot', "Hello! Ask me anything about Coen Zweers' skills, projects, experience, education or certifications.");
+    });
   </script>
 </body>
 </html>
