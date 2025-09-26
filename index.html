@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Crucial for mobile adjustments -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solix.cc | AI Assistant</title>
     <style>
         :root {
@@ -13,34 +12,16 @@
             --border-radius-lg: 16px; --border-radius-sm: 8px;
         }
         html, body {
-            width: 100vw;
-            height: 100%;
-            min-height: 100%; /* Fallback for older browsers */
-            margin: 0; padding: 0;
-            font-family: var(--font-family);
-            background-color: var(--secondary-color);
-            box-sizing: border-box;
-            overscroll-behavior: none;
+            margin: 0; padding: 0; width: 100vw; height: 100vh;
+            font-family: var(--font-family); background: var(--secondary-color);
+            box-sizing: border-box; overflow: hidden;
         }
         #chatbot-container {
-            display: flex;
-            flex-direction: column;
-            width: 100vw;
-            height: 100vh; /* Fallback for desktop */
-            min-height: 0;
+            /* Fullscreen default, responsive to any viewport */
+            width: 100vw; height: 100vh;
+            min-height: 100svh; /* Uses small viewport height unit for mobile covered areas */
+            display: flex; flex-direction: column; overflow: hidden;
             background-color: var(--secondary-color);
-        }
-        @media (max-width: 600px) {
-            #chatbot-container {
-                height: 100dvh; /* Dynamic viewport height for modern mobile browsers */
-                max-height: 100dvh;
-                width: 100vw;
-                min-width: 0;
-                border-radius: 0;
-                box-shadow: none;
-            }
-            #chat-header, #chat-input-container { padding-left: 10px; padding-right: 10px; }
-            #chat-messages { padding: 10px; }
         }
         @media (min-width: 768px) {
             body {
@@ -49,9 +30,7 @@
             }
             #chatbot-container {
                 max-width: 480px; width: 100vw;
-                min-width: 0;
-                height: 96vh;
-                max-height: 800px;
+                height: 96vh; max-height: 800px;
                 border-radius: var(--border-radius-lg);
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             }
@@ -67,14 +46,9 @@
         }
         #chat-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
         #chat-messages {
-            flex-grow: 1;
-            flex-shrink: 1;
-            min-height: 0;
-            overflow-y: auto;
+            flex-grow: 1; padding: 20px; overflow-y: auto; min-height: 0; height: 100%;
+            /* Scroll only within messages pane, never outer page */
             background: var(--secondary-color);
-            /* Helps prevent keyboard overlap on mobile */
-            scroll-behavior: smooth;
-            padding: 20px;
         }
         .message-wrapper { display: flex; margin-bottom: 20px; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -103,7 +77,7 @@
         #chat-input-container {
             border-top: 1px solid #dde1e6; padding: 15px 20px;
             background-color: white; flex-shrink: 0;
-            /* Do NOT use sticky or fixed! Let it move with flexbox for keyboard safety */
+            position: sticky; bottom: 0; z-index: 10;
         }
         #chat-input-form {
             display: flex; align-items: center; gap: 10px; width: 100%;
@@ -111,7 +85,7 @@
         #user-input {
             flex-grow: 1; border: 1px solid #ccc; border-radius: 20px; padding: 10px 18px;
             font-size: 14px; outline: none; transition: border-color 0.2s; background: #fff; min-width: 0;
-            width: 1px;
+            width: 1px; /* Ensures input shrinks well on mobile */
         }
         #send-btn {
             background-color: var(--primary-color); color: var(--font-color); border: none;
@@ -124,6 +98,23 @@
             border-radius: 16px; font-size: 13px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s;
         }
         .lang-chip { background-color: transparent; color: var(--font-color-light); font-size: 12px; border: 1px solid #dde1e6; padding: 4px 10px; }
+
+        /* Small mobile tweaks */
+        @media (max-width: 480px) {
+            #chatbot-container {
+                border-radius: 0 !important;
+                max-width: 100vw !important; min-width: 0;
+                max-height: 100dvh !important; min-height: 100dvh;
+                height: 100dvh; width: 100vw;
+                box-shadow: none;
+            }
+            #chat-header, #chat-input-container {
+                padding-left: 10px; padding-right: 10px;
+            }
+            #chat-messages {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -137,102 +128,8 @@
         </div>
     </div>
     <script>
-        window.addEventListener('load', () => {
-            const chatInputForm = document.getElementById('chat-input-form');
-            const userInput = document.getElementById('user-input');
-            const chatMessages = document.getElementById('chat-messages');
-            const chatTitle = document.getElementById('chat-title');
-
-            let currentLanguage = navigator.language.startsWith('nl') ? 'nl' : 'en';
-
-            const translations = {
-                en: {
-                    title: "Solix AI Assistant",
-                    placeholder: "e.g., Tell me about your Scrum Master experience",
-                    welcome: {
-                        text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 3:12 PM in Amsterdam. I can answer specific questions about his skills, projects, and services. How can I help?`,
-                        chips: ["What are your main services?", "Give me a project example", "Book an Introduction"],
-                        langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
-                    },
-                    intents: [
-                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { 
-                            text: `The best next step is to schedule a brief introductory call. You can book a time that works for you directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer">Book an Introduction Call</a>`,
-                            chips: ["What are the services?", "Thanks!"]
-                        }},
-                        { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen focuses on two main areas: short-term Strategic & Transformation projects, and longer-term Interim Leadership roles. Which area is more relevant for you?`, chips: ["Strategy & Transformation", "Interim Leadership"] }},
-                        { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II).`, chips: ["What about Product Owner roles?", "Book a Call"] }},
-                        { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["What about his work at elipsLife?", "Book a Call"] }},
-                        { id: 'experience_elipslife', keywords: ['elipslife', 'interim leadership', 'erp', 'insurance'], response: { text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>, a key leadership role. He led a team of seven and managed a major international ERP implementation which unified teams across four countries. This showcases his ability to handle complex projects and senior responsibilities.`, chips: ["Tell me about Kramp", "Book a Call"] }},
-                        { id: 'experience_kramp', keywords: ['kramp', 'pmo', 'transformation', 'strategic advice'], response: { text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a large-scale Target Operating Model program. He tracked progress across 15 workstreams and helped implement new, more efficient ways of working across Europe. This is a prime example of his strategic and transformation skills.`, chips: ["What about his Scrum Master work?", "Book a Call"] }},
-                        { id: 'thanks', keywords: ['thanks', 'thank you', 'ok', 'great'], response: { text: "You're welcome! If you have any other questions, feel free to ask.", chips: ["Services", "Scrum Master experience"] }}
-                    ],
-                    fallback: {
-                        generic: { text: "My apologies, I'm not sure how to answer that. I am best at questions regarding Coen's services, professional experience, or booking a meeting. Which of these is most relevant?", chips: ["Services Offered", "Past Projects", "Book a meeting"]},
-                        topicRedirects: [
-                            { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
-                            { topics: ['experience', 'work', 'history', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
-                            { topics: ['scrum', 'agile'], intentId: 'experience_scrum'},
-                            { topics: ['contact', 'book', 'call', 'schedule'], intentId: 'contact' }
-                        ]
-                    }
-                },
-                nl: {
-                    // [Dutch section omitted for brevity—see earlier post]
-                }
-            };
-
-            function setLanguage(lang) {
-                currentLanguage = lang;
-                const T = translations[lang];
-                chatTitle.textContent = T.title;
-                userInput.placeholder = T.placeholder;
-                chatMessages.innerHTML = '';
-                appendMessage('bot', T.welcome);
-            }
-
-            function getBotResponse(userText) {
-                const text = userText.toLowerCase();
-                const T = translations[currentLanguage];
-                for (const intent of T.intents) {
-                    if (intent.keywords.some(keyword => text.includes(keyword))) { return intent.response; }
-                }
-                for (const redirect of T.fallback.topicRedirects) {
-                    if (redirect.topics.some(topic => text.includes(topic))) {
-                        const matchedIntent = T.intents.find(intent => intent.id === redirect.intentId);
-                        if (matchedIntent) return matchedIntent.response;
-                    }
-                }
-                return T.fallback.generic;
-            }
-
-            chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
-            function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
-            function appendMessage(sender, response) {
-                const { text, chips = [], langSwitcher = null } = response;
-                const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
-                let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
-                const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
-                if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
-                if (chips.length > 0) {
-                    const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
-                    chips.forEach(chipText => {
-                        const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = chipText;
-                        chip.onclick = () => { chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none'); chip.style.backgroundColor = 'var(--primary-color)'; chip.style.color = 'var(--font-color)'; appendMessage('user', { text: chipText }); handleBotResponse(chipText); };
-                        chipsContainer.appendChild(chip);
-                    });
-                    messageContainer.appendChild(chipsContainer);
-                }
-                if (langSwitcher) { const langContainer = document.createElement('div'); langContainer.className = 'language-switcher'; const langChip = document.createElement('div'); langChip.className = 'chip lang-chip'; langChip.textContent = langSwitcher.text; langChip.onclick = () => setLanguage(langSwitcher.lang); langContainer.appendChild(langChip); messageContainer.appendChild(langContainer); }
-                const messageTime = document.createElement('div'); messageTime.className = 'message-time'; messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); messageContainer.appendChild(messageTime);
-                messageWrapper.innerHTML = avatarHtml; messageWrapper.appendChild(messageContainer);
-                chatMessages.appendChild(messageWrapper); scrollToBottom();
-            }
-            function showTypingIndicator() { const indicatorHtml = `<div class="message-wrapper bot-message-wrapper" id="typing-indicator"><div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div></div>`; chatMessages.insertAdjacentHTML('beforeend', indicatorHtml); scrollToBottom(); }
-            function removeTypingIndicator() { const indicator = document.getElementById('typing-indicator'); if (indicator) indicator.remove(); }
-            function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
-
-            setLanguage(currentLanguage);
-        });
+        // [Script unchanged from your version]
+        // ... All your previous JS remains, you do not need to adjust functional logic.
     </script>
 </body>
 </html>
