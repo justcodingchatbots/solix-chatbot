@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <title>Solix.cc | AI Assistant</title>
     <style>
         :root {
@@ -28,7 +29,6 @@
             background-color: transparent;
         }
 
-        /* Chatbot container now acts as the main page wrapper */
         #chatbot-container {
             width: 100%;
             height: 100%;
@@ -38,7 +38,6 @@
             overflow: hidden;
         }
 
-        /* Header */
         #chat-header {
             background-color: var(--primary-color);
             color: var(--font-color);
@@ -67,7 +66,6 @@
             font-weight: 600;
         }
 
-        /* Messages Area */
         #chat-messages {
             flex-grow: 1;
             padding: 20px;
@@ -116,6 +114,13 @@
             max-width: 100%;
         }
 
+        /* ADDED: Container for Calendly widget */
+        .calendly-embed-container {
+            margin-top: 10px;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+        }
+
         .message-container {
             display: flex;
             flex-direction: column;
@@ -150,7 +155,6 @@
             padding: 0 5px;
         }
 
-        /* Typing Indicator */
         .typing-indicator span {
             height: 8px; width: 8px; margin: 0 2px;
             background-color: #b0b8c8; border-radius: 50%;
@@ -161,12 +165,11 @@
         .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
 
-        /* Input Area */
         #chat-input-container {
             border-top: 1px solid #dde1e6;
             padding: 15px 20px;
             background-color: white;
-            flex-shrink: 0; /* Prevents input from shrinking */
+            flex-shrink: 0;
         }
 
         #chat-input-form {
@@ -190,7 +193,6 @@
         }
         #send-btn:hover { background-color: #e6b800; }
 
-        /* Suggestion Chips */
         .suggestion-chips {
             display: flex; flex-wrap: wrap;
             gap: 8px; margin-top: 12px;
@@ -221,31 +223,29 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
             const chatInputForm = document.getElementById('chat-input-form');
             const userInput = document.getElementById('user-input');
             const chatMessages = document.getElementById('chat-messages');
 
-            // --- Event Listeners ---
             chatInputForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const messageText = userInput.value.trim();
                 if (messageText) {
-                    appendMessage({ text: messageText }, 'user');
+                    appendMessage('user', { text: messageText });
                     userInput.value = '';
                     handleBotResponse(messageText);
                 }
             });
 
-            // --- Core Functions ---
             function startConversation() {
                 const welcomeMessage = {
-                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:21 PM in Amsterdam. How can I help you today?`,
-                    chips: ["What services does Solix offer?", "Tell me about Coen's experience", "How do I get in touch?"]
+                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:08 PM in Amsterdam. How can I help you today?`,
+                    chips: ["What services does Solix offer?", "Tell me about Coen's experience", "Book an introduction"]
                 };
-                appendMessage(welcomeMessage, 'bot');
+                appendMessage('bot', welcomeMessage);
             }
 
             function handleBotResponse(userText) {
@@ -253,16 +253,17 @@
                 setTimeout(() => {
                     removeTypingIndicator();
                     const botResponse = getBotResponse(userText);
-                    appendMessage(botResponse, 'bot');
+                    appendMessage('bot', botResponse);
                 }, 1200);
             }
 
-            // --- DOM Manipulation ---
-            function appendMessage(response, sender) {
+            // --- MODIFIED: appendMessage function to handle HTML embeds ---
+            function appendMessage(sender, response) {
                 const { text, chips = [], htmlContent = null } = response;
 
                 const messageWrapper = document.createElement('div');
                 messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
+                
                 let avatarHtml = '';
                 if (sender === 'bot') {
                     avatarHtml = '<div class="bot-avatar">S</div>';
@@ -277,6 +278,14 @@
                     messageContent.innerHTML = text;
                     messageContainer.appendChild(messageContent);
                 }
+                
+                // If there's HTML content (like Calendly), create a container for it
+                if (htmlContent) {
+                    const embedContainer = document.createElement('div');
+                    embedContainer.className = 'calendly-embed-container';
+                    embedContainer.innerHTML = htmlContent;
+                    messageContainer.appendChild(embedContainer);
+                }
 
                 if (chips.length > 0) {
                     const chipsContainer = document.createElement('div');
@@ -289,7 +298,7 @@
                             chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none');
                             chip.style.backgroundColor = 'var(--primary-color)';
                             chip.style.color = 'var(--font-color)';
-                            appendMessage({ text: chipText }, 'user');
+                            appendMessage('user', { text: chipText });
                             handleBotResponse(chipText);
                         };
                         chipsContainer.appendChild(chip);
@@ -331,21 +340,36 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // --- THE CHATBOT BRAIN ---
+            // --- MODIFIED: Chatbot brain to include Calendly embed ---
             function getBotResponse(userText) {
                 const text = userText.toLowerCase();
-                const calendlyLink = '<a href="https://calendly.com/coenzweers-solix/introduction" target="_blank">Book an Introduction Call</a>';
-                const emailLink = '<a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>';
 
+                // --- MODIFIED: Contact intent now returns HTML content ---
+                const contactIntent = {
+                    keywords: ['contact', 'email', 'book', 'call', 'available', 'touch'],
+                    response: {
+                        text: `Of course. The most effective way to connect is to schedule an introduction call directly in my calendar below.`,
+                        htmlContent: `
+                            <div class="calendly-inline-widget" 
+                                 data-url="https://calendly.com/coenzweers-solix/introduction" 
+                                 style="min-width:320px;height:700px;">
+                            </div>
+                        `,
+                        chips: ["What are your services?", "Thanks!"]
+                    }
+                };
+                
                 const intents = [
+                    contactIntent, // Using the new contact intent
                     {
-                        keywords: ['contact', 'email', 'book', 'call', 'available', 'touch'],
-                        response: {
-                            text: `Coen is currently available for new assignments. The most effective way to connect is to schedule a meeting directly or send an email.<br><br>🗓️ ${calendlyLink}<br>📧 ${emailLink}`,
-                            chips: ["What are Solix's services?", "Thanks!"]
-                        }
+                        keywords: ['solix', 'company', 'about you'],
+                        response: { /* ... other intents ... */ }
                     },
-                    // ... other intents ...
+                    // ... include all other intents here from the previous version ...
+                ];
+                // FAKE SPREAD for brevity
+                const fullIntents = [
+                    contactIntent,
                     {
                         keywords: ['solix', 'company', 'about you'],
                         response: {
@@ -354,4 +378,63 @@
                         }
                     },
                     {
-                        keywords: ['service', '
+                        keywords: ['service', 'offer', 'what do you do', 'help with'],
+                        response: {
+                            text: `Solix provides flexible support in four key areas:<br>🚀 Strategic Consultancy Projects<br>👔 Interim Leadership Roles<br>🔄 Change Management<br>⚡ Agile Transformation Workshops<br><br>Which area interests you the most?`,
+                            chips: ["Strategy", "Interim Leadership", "Change Management", "Workshops"]
+                        }
+                    },
+                    {
+                        keywords: ['experience', 'background', 'cv', 'resume', 'worked'],
+                        response: {
+                            text: `Coen has a rich background as a seasoned IT specialist. His experience spans high-level strategy and hands-on execution. To give you the most relevant info, what are you most interested in?<br>`,
+                            chips: ["Leadership Roles", "Product Management", "Consulting (Accenture)"]
+                        }
+                    },
+                    {
+                        keywords: ['leadership'],
+                        response: { text: `Coen has recently served as <strong>Head of Business Services (a.i.) at elipsLife</strong>, where he led a team of seven and managed a major international ERP system implementation. This demonstrates his capability to provide senior-level expertise and ensure business continuity.`, chips: ["Tell me about Sunrock", "How to contact Coen?"]}
+                    },
+                    {
+                        keywords: ['product management', 'sunrock', 'product owner'],
+                        response: { text: `As an <strong>IT Product Manager at Sunrock</strong>, Coen led the end-to-end creation of scalable digital products, including a customer portal that increased engagement and a design tool for PV systems. He is skilled in managing backlogs, market research, and working with tools like Figma and Jira.`, chips: ["What about his consulting work?", "What are his certifications?"]}
+                    },
+                    {
+                        keywords: ['consulting', 'accenture'],
+                        response: { text: `During his four years as a <strong>Strategy & Technology Consultant at Accenture</strong>, Coen delivered projects for major clients like Rabobank, ING, and Athlon. His work involved AI Monitoring, RPA, Blockchain, and developing e-commerce value propositions.`, chips: ["What are his specific skills?", "Book a call"]}
+                    },
+                    {
+                        keywords: ['skill', 'expertise', 'proficient'],
+                        response: {
+                            text: `Coen's core skills include: IT Project Management, Product Management, Agile & Scrum, Change Management, Robotic Process Automation (RPA), and IT Strategy. He is certified as an Advanced Product Owner (PSPO II), Advanced Scrum Master (PSM II), and SAFe Agilist.`,
+                            chips: ["Tell me about his experience", "How do I get in touch?"]
+                        }
+                    },
+                    {
+                        keywords: ['hello', 'hi', 'hey'],
+                        response: { text: "Hello there! How can I help you learn more about Solix and what Coen can offer?", chips: ["Services", "Experience", "Contact"] }
+                    },
+                    {
+                        keywords: ['thanks', 'thank you', 'bye', 'ok'],
+                        response: { text: "You're welcome! Feel free to ask if anything else comes to mind. Have a great day!", chips: [] }
+                    },
+                ];
+
+
+                for (const intent of fullIntents) {
+                    if (intent.keywords.some(keyword => text.includes(keyword))) {
+                        return intent.response;
+                    }
+                }
+
+                return {
+                    text: "I'm best at answering questions about Solix's services, Coen's experience, and how to get in touch. How about we start with one of those?",
+                    chips: ["Services", "Experience", "Book an introduction"]
+                };
+            }
+
+            startConversation();
+        });
+    </script>
+</body>
+</html>
