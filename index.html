@@ -6,7 +6,7 @@
     <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
     <title>Solix.cc | AI Assistant</title>
     <style>
-        /* All CSS from previous version remains the same */
+        /* CSS is unchanged from the previous version */
         :root {
             --primary-color: #ffd100; --secondary-color: #f1f3f4; --bot-message-bg: #ffffff;
             --user-message-bg: #fff8e1; --font-color: #172b4d; --font-color-light: #6b778c;
@@ -89,32 +89,46 @@
                         langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
                     },
                     intents: [
-                        { keywords: ['service', 'offer', 'what do you do'], response: { text: `Great! Coen provides support across several key areas. To give you the most relevant information, are you looking for short-term strategic advice or a longer-term interim leadership role?`, chips: ["Strategic Advice", "Interim Leadership"] }},
-                        { keywords: ['strategic advice', 'consultancy'], response: { text: `For strategic projects, Coen specializes in IT strategy, change management, and agile transformation workshops. He helps teams align on goals and execute effectively. Would you like to see a case study on this?`, chips: ["Yes, show me a case study", "Book a Call"] }},
-                        { keywords: ['interim leadership', 'interim'], response: { text: `As an interim leader, Coen provides senior-level expertise to manage teams and ensure business continuity during critical projects or transitions. His work at elipsLife is a great example of this.`, chips: ["Tell me about elipsLife", "Book a Call"] }},
-                        { keywords: ['past project', 'experience', 'case study', 'elipslife'], response: { text: `At elipsLife, Coen served as interim Head of Business Services, leading a team of seven and managing a major international ERP implementation. This project unified teams across four countries and reduced financial reporting time by 60%.`, chips: ["What other experience does he have?", "Book a Call"] }},
-                        { keywords: ['contact', 'book', 'call', 'introduction'], response: { text: `Based on our conversation, a brief 15-minute introductory call with Coen seems like the perfect next step. You can book a time that works for you directly below.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
-                        { keywords: ['thanks', 'thank you', 'ok'], response: { text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect.", chips: ["Services", "Experience"] }}
+                        { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Great! Coen provides support across several key areas. To give you the most relevant information, are you looking for short-term strategic advice or a longer-term interim leadership role?`, chips: ["Strategic Advice", "Interim Leadership"] }},
+                        { id: 'services_strategy', keywords: ['strategic advice', 'consultancy', 'strategy'], response: { text: `For strategic projects, Coen specializes in IT strategy, change management, and agile transformation workshops. He helps teams align on goals and execute effectively. Would you like to see a case study on this?`, chips: ["Yes, show a case study", "Book a Call"] }},
+                        { id: 'services_interim', keywords: ['interim leadership', 'interim'], response: { text: `As an interim leader, Coen provides senior-level expertise to manage teams and ensure business continuity during critical projects or transitions. His work at elipsLife is a great example of this.`, chips: ["Tell me about elipsLife", "Book a Call"] }},
+                        { id: 'experience_overview', keywords: ['experience', 'background', 'past project', 'work', 'history', 'case study', 'elipslife', 'resume'], response: { text: `At elipsLife, Coen served as interim Head of Business Services, leading a team of seven and managing a major international ERP implementation. This project unified teams across four countries and reduced financial reporting time by 60%. What other areas of his experience are you interested in?`, chips: ["Leadership Roles", "Product Management", "Book a Call"] }},
+                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { text: `Based on our conversation, a brief 15-minute introductory call with Coen seems like the perfect next step. You can book a time that works for you directly below.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
+                        { id: 'thanks', keywords: ['thanks', 'thank you', 'ok', 'great'], response: { text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect.", chips: ["Services", "Experience"] }}
                     ],
-                    fallback: { text: "I can assist with questions about services, experience, and booking a call. How can I help you with one of those topics?", chips: ["Services Offered", "Past Projects", "Book a Call"]}
+                    fallback: {
+                        generic: { text: "My apologies, I'm not sure how to answer that. I am best at questions regarding Coen's services, professional experience, or booking a meeting.", chips: ["Services Offered", "Past Projects", "Book a Call"]},
+                        topicRedirects: [
+                            { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
+                            { topics: ['experience', 'work', 'history', 'project', 'case'], intentId: 'experience_overview' },
+                            { topics: ['contact', 'book', 'call', 'schedule'], intentId: 'contact' }
+                        ]
+                    }
                 },
                 nl: {
                     title: "Solix AI Assistent",
-                    placeholder: "Vraag naar projecten, skills, of diensten...",
+                    placeholder: "Stel een vraag over projecten, skills, of diensten...",
                     welcome: {
                         text: `Hallo! Ik ben de AI assistent van Coen Zweers. Ik kan u helpen bepalen of zijn IT-expertise de juiste match is voor uw project. Waar wilt u meer over weten?`,
                         chips: ["Diensten", "Eerdere Projecten & Ervaring", "Plan een Kennismaking"],
                         langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }
                     },
                     intents: [
-                        { keywords: ['diensten', 'aanbod'], response: { text: `Uitstekend! Coen ondersteunt op diverse kergebieden. Om u de beste informatie te geven, zoekt u strategisch advies voor de korte termijn, of een interim leiderschapsrol voor de langere termijn?`, chips: ["Strategisch Advies", "Interim Leiderschap"] }},
-                        { keywords: ['strategisch advies', 'consultancy'], response: { text: `Voor strategische projecten is Coen gespecialiseerd in IT-strategie, verandermanagement en agile transformatie workshops. Hij helpt teams om doelen af te stemmen en effectief uit te voeren. Wilt u hier een case study van zien?`, chips: ["Ja, toon een case study", "Plan een Gesprek"] }},
-                        { keywords: ['interim leiderschap', 'interim'], response: { text: `Als interim leider biedt Coen senior expertise om teams te managen en bedrijfscontinuïteit te garanderen tijdens kritieke projecten of transities. Zijn werk bij elipsLife is hier een goed voorbeeld van.`, chips: ["Vertel over elipsLife", "Plan een Gesprek"] }},
-                        { keywords: ['project', 'ervaring', 'case study', 'elipslife'], response: { text: `Bij elipsLife was Coen interim Hoofd Business Services. Hij leidde een team van zeven en stuurde een grote, internationale ERP-implementatie aan. Dit project bracht teams uit vier landen samen en reduceerde de financiële rapportagetijd met 60%.`, chips: ["Welke andere ervaring heeft hij?", "Plan een Gesprek"] }},
-                        { keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking'], response: { text: `Op basis van ons gesprek lijkt een korte kennismaking van 15 minuten met Coen de perfecte volgende stap. U kunt hieronder direct een geschikt moment inplannen.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
-                        { keywords: ['bedankt', 'dank', 'ok'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten.", chips: ["Diensten", "Ervaring"] }}
+                        { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Uitstekend! Coen ondersteunt op diverse kergebieden. Om u de beste informatie te geven, zoekt u strategisch advies voor de korte termijn, of een interim leiderschapsrol voor de langere termijn?`, chips: ["Strategisch Advies", "Interim Leiderschap"] }},
+                        { id: 'services_strategy', keywords: ['strategisch advies', 'consultancy', 'strategie'], response: { text: `Voor strategische projecten is Coen gespecialiseerd in IT-strategie, verandermanagement en agile transformatie workshops. Hij helpt teams om doelen af te stemmen en effectief uit te voeren. Wilt u hier een case study van zien?`, chips: ["Ja, toon een case study", "Plan een Gesprek"] }},
+                        { id: 'services_interim', keywords: ['interim leiderschap', 'interim'], response: { text: `Als interim leider biedt Coen senior expertise om teams te managen en bedrijfscontinuïteit te garanderen tijdens kritieke projecten of transities. Zijn werk bij elipsLife is hier een goed voorbeeld van.`, chips: ["Vertel over elipsLife", "Plan een Gesprek"] }},
+                        { id: 'experience_overview', keywords: ['ervaring', 'achtergrond', 'project', 'werk', 'historie', 'case study', 'elipslife', 'cv'], response: { text: `Bij elipsLife was Coen interim Hoofd Business Services. Hij leidde een team van zeven en stuurde een grote, internationale ERP-implementatie aan. Dit project bracht teams uit vier landen samen en reduceerde de financiële rapportagetijd met 60%. In welke andere gebieden van zijn ervaring bent u geïnteresseerd?`, chips: ["Leiderschapsrollen", "Product Management", "Plan een Gesprek"] }},
+                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { text: `Op basis van ons gesprek lijkt een korte kennismaking van 15 minuten met Coen de perfecte volgende stap. U kunt hieronder direct een geschikt moment inplannen.`, htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`}},
+                        { id: 'thanks', keywords: ['bedankt', 'dank', 'ok', 'geweldig'], response: { text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten.", chips: ["Diensten", "Ervaring"] }}
                     ],
-                    fallback: { text: "Ik kan u helpen met vragen over diensten, ervaring, en het inplannen van een gesprek. Waarmee kan ik u van dienst zijn?", chips: ["Diensten", "Eerdere Projecten", "Plan een Gesprek"]}
+                    fallback: {
+                        generic: { text: "Mijn excuses, dat begrijp ik niet. Ik kan het beste helpen met vragen over diensten, ervaring en contactmogelijkheden.", chips: ["Diensten", "Ervaring", "Contact"] },
+                        topicRedirects: [
+                            { topics: ['dienst', 'aanbod', 'helpen'], intentId: 'services_overview' },
+                            { topics: ['ervaring', 'werk', 'historie', 'project', 'case'], intentId: 'experience_overview' },
+                            { topics: ['contact', 'boek', 'gesprek', 'afspraak'], intentId: 'contact' }
+                        ]
+                    }
                 }
             };
 
@@ -127,56 +141,55 @@
                 appendMessage('bot', T.welcome);
             }
 
+            // --- IMPROVED: getBotResponse function with smarter fallback ---
             function getBotResponse(userText) {
                 const text = userText.toLowerCase();
                 const T = translations[currentLanguage];
+                
+                // 1. Primary Match: Try to find a specific intent
                 for (const intent of T.intents) {
                     if (intent.keywords.some(keyword => text.includes(keyword))) {
                         return intent.response;
                     }
                 }
-                return T.fallback;
+
+                // 2. Secondary Match (Smart Fallback): If no specific match, look for broad topics
+                for (const redirect of T.fallback.topicRedirects) {
+                    if (redirect.topics.some(topic => text.includes(topic))) {
+                        const matchedIntent = T.intents.find(intent => intent.id === redirect.intentId);
+                        if (matchedIntent) {
+                            return matchedIntent.response;
+                        }
+                    }
+                }
+
+                // 3. Final Fallback: If still no match, give the generic message
+                return T.fallback.generic;
             }
 
-            // --- All other functions (appendMessage, showTypingIndicator, etc.) remain the same ---
+            // --- All other functions (appendMessage, etc.) are unchanged ---
             chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
             function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
             function appendMessage(sender, response) {
                 const { text, chips = [], htmlContent = null, langSwitcher = null } = response;
-                const messageWrapper = document.createElement('div');
-                messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
-                let avatarHtml = '';
-                if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
-                const messageContainer = document.createElement('div');
-                messageContainer.className = 'message-container';
-                if (text) {
-                    const messageContent = document.createElement('div');
-                    messageContent.className = `message-content ${sender}-message-content`;
-                    messageContent.innerHTML = text;
-                    messageContainer.appendChild(messageContent);
-                }
+                const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
+                let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
+                const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
+                if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
                 if (htmlContent) { const embedContainer = document.createElement('div'); embedContainer.className = 'calendly-embed-container'; embedContainer.innerHTML = htmlContent; messageContainer.appendChild(embedContainer); }
                 if (chips.length > 0) {
-                    const chipsContainer = document.createElement('div');
-                    chipsContainer.className = 'suggestion-chips';
+                    const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
                     chips.forEach(chipText => {
-                        const chip = document.createElement('div');
-                        chip.className = 'chip';
-                        chip.textContent = chipText;
+                        const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = chipText;
                         chip.onclick = () => { chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none'); chip.style.backgroundColor = 'var(--primary-color)'; chip.style.color = 'var(--font-color)'; appendMessage('user', { text: chipText }); handleBotResponse(chipText); };
                         chipsContainer.appendChild(chip);
                     });
                     messageContainer.appendChild(chipsContainer);
                 }
                 if (langSwitcher) { const langContainer = document.createElement('div'); langContainer.className = 'language-switcher'; const langChip = document.createElement('div'); langChip.className = 'chip lang-chip'; langChip.textContent = langSwitcher.text; langChip.onclick = () => setLanguage(langSwitcher.lang); langContainer.appendChild(langChip); messageContainer.appendChild(langContainer); }
-                const messageTime = document.createElement('div');
-                messageTime.className = 'message-time';
-                messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                messageContainer.appendChild(messageTime);
-                messageWrapper.innerHTML = avatarHtml;
-                messageWrapper.appendChild(messageContainer);
-                chatMessages.appendChild(messageWrapper);
-                scrollToBottom();
+                const messageTime = document.createElement('div'); messageTime.className = 'message-time'; messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); messageContainer.appendChild(messageTime);
+                messageWrapper.innerHTML = avatarHtml; messageWrapper.appendChild(messageContainer);
+                chatMessages.appendChild(messageWrapper); scrollToBottom();
             }
             function showTypingIndicator() { const indicatorHtml = `<div class="message-wrapper bot-message-wrapper" id="typing-indicator"><div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div></div>`; chatMessages.insertAdjacentHTML('beforeend', indicatorHtml); scrollToBottom(); }
             function removeTypingIndicator() { const indicator = document.getElementById('typing-indicator'); if (indicator) indicator.remove(); }
