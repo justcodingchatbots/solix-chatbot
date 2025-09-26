@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solix.cc | Digital Assistant</title>
-    <style>
+    <title>Solix.cc | AI Assistant</title> <style>
         :root {
             --primary-color: #ffd100;
             --secondary-color: #f4f5f7;
@@ -87,7 +86,7 @@
             align-items: center;
             flex-shrink: 0;
             gap: 12px;
-            cursor: grab; /* ADDED: Indicates the header is draggable */
+            cursor: grab;
         }
 
         #header-avatar {
@@ -272,8 +271,7 @@
     <div id="chatbot-container">
         <div id="chat-header">
             <div id="header-avatar">S</div>
-            <h3>Solix Digital Assistant</h3>
-            <button id="close-btn">&times;</button>
+            <h3>Solix AI Assistant</h3> <button id="close-btn">&times;</button>
         </div>
         <div id="chat-messages">
             </div>
@@ -294,7 +292,7 @@
             const chatInputForm = document.getElementById('chat-input-form');
             const userInput = document.getElementById('user-input');
             const chatMessages = document.getElementById('chat-messages');
-            const chatHeader = document.getElementById('chat-header'); // ADDED for dragging
+            const chatHeader = document.getElementById('chat-header');
 
             let conversationStarted = false;
 
