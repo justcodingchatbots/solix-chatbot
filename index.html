@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Solix.cc | AI Assistant CV</title>
+  <title>Solix.cc | AI Assistant with CV</title>
   <style>
     :root {
       --primary-color: #ffd100;
@@ -13,12 +13,15 @@
       --font-color: #172b4d;
       --font-color-light: #6b778c;
       --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --border-radius-lg: 0;
+      --border-radius-sm: 0;
     }
     html, body {
       width: 100vw;
       height: 100%;
       min-height: 100dvh;
-      margin: 0; padding: 0;
+      margin: 0;
+      padding: 0;
       font-family: var(--font-family);
       background: var(--secondary-color);
       box-sizing: border-box;
@@ -32,8 +35,8 @@
       background: var(--secondary-color);
       display: flex;
       flex-direction: column;
+      min-height: 0;
       z-index: 9999;
-      overflow: hidden;
     }
     #chat-header {
       background-color: var(--primary-color);
@@ -44,7 +47,6 @@
       gap: 12px;
       flex-shrink: 0;
       min-height: 56px;
-      user-select: none;
     }
     #header-avatar {
       width: 40px; height: 40px; border-radius: 50%; background-color: rgba(0,0,0,0.1);
@@ -62,12 +64,7 @@
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
     }
-    .message-wrapper {
-      display: flex;
-      margin-bottom: 20px;
-      animation: fadeIn 0.4s ease;
-      word-break: break-word;
-    }
+    .message-wrapper { display: flex; margin-bottom: 20px; animation: fadeIn 0.4s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .bot-message-wrapper { justify-content: flex-start; }
     .user-message-wrapper { justify-content: flex-end; }
@@ -80,52 +77,18 @@
       padding: 12px 16px;
       border-radius: 8px;
       line-height: 1.5;
-      max-width: 90%;
+      word-wrap: break-word;
+      max-width: 100%;
       box-sizing: border-box;
-      white-space: pre-line;
     }
-    .message-container {
-      display: flex;
-      flex-direction: column;
-      max-width: calc(100% - 44px);
-    }
-    .bot-message-wrapper .message-container {
-      align-items: flex-start;
-    }
-    .user-message-wrapper .message-container {
-      align-items: flex-end;
-      max-width: 85%;
-    }
-    .bot-message-content {
-      background-color: var(--bot-message-bg);
-      color: var(--font-color);
-      border-bottom-left-radius: 8px;
-    }
-    .user-message-content {
-      background-color: var(--user-message-bg);
-      color: var(--font-color);
-      border-bottom-right-radius: 8px;
-    }
-    .message-time {
-      font-size: 11px;
-      color: var(--font-color-light);
-      margin-top: 6px;
-      padding: 0 5px;
-      user-select: none;
-    }
-    .typing-indicator span {
-      height: 8px;
-      width: 8px;
-      margin: 0 2px;
-      background-color: #b0b8c8;
-      border-radius: 50%;
-      display: inline-block;
-      animation: bounce 1.4s infinite ease-in-out both;
-    }
-    @keyframes bounce {
-      0%,80%,100% { transform: scale(0); }
-      40% { transform: scale(1.0); }
-    }
+    .message-container { display: flex; flex-direction: column; max-width: calc(100% - 44px); }
+    .bot-message-wrapper .message-container { align-items: flex-start; }
+    .user-message-wrapper .message-container { align-items: flex-end; max-width: 85%; }
+    .bot-message-content { background-color: var(--bot-message-bg); border-bottom-left-radius: 8px; }
+    .user-message-content { background-color: var(--user-message-bg); border-bottom-right-radius: 8px; }
+    .message-time { font-size: 11px; color: var(--font-color-light); margin-top: 6px; padding: 0 5px; }
+    .typing-indicator span { height: 8px; width: 8px; margin: 0 2px; background-color: #b0b8c8; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite ease-in-out both; }
+    @keyframes bounce { 0%,80%,100% { transform: scale(0); } 40% { transform: scale(1.0); } }
     #chat-input-container {
       border-top: 1px solid #dde1e6;
       background-color: #fff;
@@ -175,7 +138,7 @@
     <div id="chat-messages"></div>
     <div id="chat-input-container">
       <form id="chat-input-form">
-        <input type="text" id="user-input" autocomplete="off" placeholder="Ask me about Coen's CV, experience, skills..." />
+        <input type="text" id="user-input" autocomplete="off" placeholder="Ask me about Coen's skills or project experience" />
         <button type="submit" id="send-btn">➤</button>
       </form>
     </div>
@@ -185,86 +148,75 @@
       const chatInputForm = document.getElementById('chat-input-form');
       const userInput = document.getElementById('user-input');
       const chatMessages = document.getElementById('chat-messages');
+      const chatTitle = document.getElementById('chat-title');
 
-      // The full CV knowledge base: each with keywords and detailed answers (simplified here for brevity)
       const knowledgeBase = [
         {
           id: 'profile',
-          keywords: ['profile', 'about', 'summary', 'who are you', 'personality'],
-          response: `Energetic, opportunity spotter and enjoying life to the fullest! Seasoned IT specialist with structured way of working, people-first mentality, and results-driven.`
+          keywords: ['profile', 'about you', 'summary', 'introduction', 'who are you', 'personality'],
+          response: `Energetic, opportunity spotter and enjoying life to the fullest! Seasoned IT specialist with structured working, people-first mentality and results driven.`
         },
         {
           id: 'elipslife',
-          keywords: ['elipslife', 'head of business services', 'erp', 'insurance', 'project management'],
-          response: `At elipsLife (07/2024–07/2025), Coen led a team of seven business experts and project managers focused on business servicing, process mapping, and digital product development. He managed a large ERP system implementation across multiple countries with a successful go-live on May 12, 2025. Key deliverables include a new core insurance platform, finance application platform interfacing with SAP, and full migration of the portfolio in the Netherlands.`
+          keywords: ['elipslife', 'head of business services', 'erp project', 'insurance', 'project manager', 'digital products'],
+          response: `At elipsLife (07/2024–07/2025), Coen was Head of Business Services and IT Project Manager. He led a team of seven business experts and project managers focused on servicing the business, process mapping, and developing new digital products. He managed a large ERP system implementation across the Netherlands, Luxembourg, Switzerland, and Poland, with a successful go-live on May 12, 2025. This included a new core insurance platform, finance application platform (FinanceHub), replacement of document generation and archive systems, and migration of the entire portfolio in the Netherlands. He also led strategic project management and change communication.`
         },
         {
           id: 'kramp',
-          keywords: ['kramp', 'transformation', 'pmо', 'target operating model', 'change management'],
-          response: `At Kramp (09/2023–06/2024), Coen was Transformation Management Officer (PMO) for the Target Operating Model program, responsible for project management, communications and change plans across 15 workstreams and Europe-wide adoption of new organizational models.`
+          keywords: ['kramp', 'pmо', 'transformation', 'target operating model', 'europe', 'change management'],
+          response: `At Kramp (09/2023–06/2024), Coen was Transformation Management Officer (PMO) for the Target Operating Model program, responsible for project management, communication, and change across Europe. He prepared executive board meetings, tracked progress of 15 workstreams and delivered new working methods including a European cluster model and product model structure.`
         },
         {
           id: 'sunrock',
-          keywords: ['sunrock', 'product owner', 'it product manager', 'solar parks', 'digital tools'],
-          response: `At Sunrock (06/2022–07/2023), Coen led the end-to-end development and launch of a customer portal and a digital design tool for solar PV systems, improving customer engagement and innovation strategy execution. Skills include backlog management in Jira and design using Figma.`
+          keywords: ['sunrock', 'product owner', 'product manager', 'solar parks', 'digital products', 'jira', 'figma'],
+          response: `At Sunrock (06/2022–07/2023), Coen was IT Product Manager and Product Owner in the Innovation & IT department. He led project management and launch of a customer portal and a digital design tool for PV systems including energy and battery storage solutions, boosting customer engagement and revenue. He developed innovation strategy, managed backlogs and tasks in Jira, designed in Figma, and collaborated closely with teams to reduce development time.`
         },
         {
           id: 'abnamro',
-          keywords: ['abnamro', 'agile coach', 'scrum master', 'agile', 'scrum framework'],
-          response: `At ABN AMRO (09/2021–06/2022), Coen was Agile Coach and Scrum Master for 3 teams, helping transition to an agile mindset, organizing scrum ceremonies, and temporarily replacing product owners.`
+          keywords: ['abn amro', 'agile coach', 'scrum master', 'agile mindset', 'scrum teams', 'retail banking'],
+          response: `At ABN AMRO (09/2021–06/2022), Coen worked as Agile Coach and Scrum Master for three teams totaling 25 members, improving agile ways of working, coordinating scrum ceremonies and replacing product owners temporarily. He also coordinated a monitoring dashboard project to reduce issue detection time.`
         },
         {
           id: 'accenture',
-          keywords: ['accenture', 'strategy consultant', 'rpa', 'ai', 'product owner', 'blockchain'],
-          response: `At Accenture (2017–2021), roles included Strategy Consultant, IT Product Owner for Rabobank, Business Analyst for Rabobank and ING, and Blockchain developer for APG. Achievements: AI monitoring solutions, RPA automation, blockchain projects in pensions, and fraud management systems.`
+          keywords: ['accenture', 'strategy consultant', 'product owner', 'rabobank', 'strategy', 'rpa', 'blockchain', 'automation'],
+          response: `From 10/2017 to 08/2021, Coen was a Strategy & Technology Consultant at Accenture with project experience including IT Product Owner for Rabobank's AI Monitoring, Strategy Consultant for Athlon and Nationale Nederlanden, Business Analyst for Rabobank and APG, and Product Owner for ING's RPA and AI automation team. He led deliveries of AI monitoring solutions, process automations, blockchain pension solutions, and fraud management systems.`
         },
         {
           id: 'education',
-          keywords: ['education', 'msc', 'bsc', 'university', 'hanze', 'groningen'],
-          response: `Coen holds an MSc in Marketing Analytics and Data Science from University of Groningen (2015–2017), a Pre-MSc Marketing year, an international exchange in South Korea, and a BSc in Industrial Engineering & Management from Hanze University.`
+          keywords: ['education', 'study', 'university', 'msc', 'bsc', 'marketing analytics', 'industrial engineering', 'exchange'],
+          response: `Coen holds an MSc in Marketing Analytics and Data Science from University of Groningen (2015–2017). He also completed a Pre-MSc Marketing, an international student exchange program at Hanyang University in South Korea, and a BSc in Industrial Engineering & Management from Hanze University Groningen.`
         },
         {
           id: 'skills',
-          keywords: ['skills', 'software', 'certificates', 'rpa', 'blockchain', 'scrum', 'pspo', 'psm', 'languages'],
-          response: `Skills include Strategy & Technology Consulting, Agile Scrum Project Management, Blockchain & DLT, RPA, NLP, Product Design, and Stakeholder Management. Software: MS Office, Jira, Figma, Automation Anywhere, ServiceNow, Splunk, Confluence and more. Certifications: PSPO II, PSM II, SAFe Agilist, Advanced Scrum Master, Certified RPA Professional, R3 Corda Developer. Languages: Dutch (native), English (full professional), German (limited).`
+          keywords: ['skills', 'software', 'certificates', 'languages', 'rpa', 'blockchain', 'scrum', 'product owner'],
+          response: `Key skills include Strategy & Technology Consulting, IT Project Management, Agile Scrum, Product Management, Blockchain & Distributed Ledger Technology, RPA, NLP, and UX. Experienced with MS Office, MS Visio, Automation Anywhere, Jira, Confluence, Azure DevOps, Figma, ServiceNow, Splunk dashboarding. Certified PSPO II, PSM II, SAFe Agilist, SAFe Advanced Scrum Master, Automation Anywhere Advanced RPA Professional, and R3 Corda Developer. Languages: Dutch (native), English (full professional), German (limited).`
         },
         {
           id: 'internships',
           keywords: ['internship', 'vodafone', 'toll group', 'hooghoudt', 'marketing intelligence', 'supply chain'],
-          response: `Coen completed internships at Vodafone HQ in Marketing Intelligence, Toll Group in Nike's supply chain management, and Hooghoudt Jenever in production line redesign.`
+          response: `Coen completed internships at Vodafone HQ in Marketing Intelligence, Toll Group in supply chain optimisation for Nike, and Hooghoudt Jenever & Gin in production line redesign and operational excellence.`
         },
       ];
 
+      // Basic keyword matching (improve as needed)
       function getResponseForInput(text) {
         const lower = text.toLowerCase();
         for (const item of knowledgeBase) {
-          if (item.keywords.some(keyword => lower.includes(keyword))) return item.response;
+          for (const keyword of item.keywords) {
+            if (lower.includes(keyword)) return item.response;
+          }
         }
-        return "Sorry, I don't have information on that. Please ask about Coen's experience, education, skills, or projects.";
+        return "Sorry, I can't answer that specifically yet. Please ask about experience, education, skills, or projects.";
       }
 
       function appendMessage(sender, message) {
         const wrapper = document.createElement('div');
         wrapper.className = `message-wrapper ${sender}-message-wrapper`;
-
-        const container = document.createElement('div');
-        container.className = 'message-container';
-
-        const content = document.createElement('div');
-        content.className = 'message-content ' + (sender === 'bot' ? 'bot-message-content' : 'user-message-content');
-
-        content.textContent = message;
-
-        container.appendChild(content);
-
         if (sender === 'bot') {
-          const avatar = document.createElement('div');
-          avatar.className = 'bot-avatar';
-          avatar.textContent = 'S';
-          wrapper.appendChild(avatar);
+          wrapper.innerHTML = `<div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content">${message}</div></div>`;
+        } else {
+          wrapper.innerHTML = `<div class="message-container"><div class="message-content user-message-content">${message}</div></div>`;
         }
-
-        wrapper.appendChild(container);
         chatMessages.appendChild(wrapper);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
@@ -281,7 +233,8 @@
         }, 500);
       };
 
-      appendMessage('bot', "Hello! Ask me anything about Coen Zweers’ CV, including his experience, education, skills, certifications, and internships.");
+      // Welcome message
+      appendMessage('bot', "Hello! Ask me anything about Coen Zweers' skills, projects, experience, education or certifications.");
     });
   </script>
 </body>
