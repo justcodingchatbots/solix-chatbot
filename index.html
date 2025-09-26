@@ -7,75 +7,35 @@
     <style>
         :root {
             --primary-color: #ffd100;
-            --secondary-color: #f1f3f4; /* UPDATED to match Google Sites "Level" Style 1 */
+            --secondary-color: #f1f3f4; /* Google Sites "Level" Style 1 */
             --bot-message-bg: #ffffff;
             --user-message-bg: #fff8e1;
             --font-color: #172b4d;
             --font-color-light: #6b778c;
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --border-radius-lg: 16px;
             --border-radius-sm: 8px;
-            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
-        body {
+        /* Core layout for full-screen */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevents scrollbars on the iframe */
             font-family: var(--font-family);
             background-color: transparent;
         }
 
-        /* Chat Opener Button */
-        #chatbot-opener {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: var(--primary-color);
-            color: var(--font-color);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            z-index: 999;
-        }
-
-        #chatbot-opener svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        #chatbot-opener:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Chatbot Container */
+        /* Chatbot container now acts as the main page wrapper */
         #chatbot-container {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            width: 380px;
-            max-width: 90vw;
-            height: 75vh;
-            max-height: 650px;
-            background-color: var(--secondary-color); /* This now uses the updated color */
-            border-radius: var(--border-radius-lg);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            height: 100%;
+            background-color: var(--secondary-color);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transform-origin: bottom right;
-            transform: scale(0);
-            opacity: 0;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease;
-            z-index: 1000;
-        }
-
-        #chatbot-container.open {
-            transform: scale(1);
-            opacity: 1;
         }
 
         /* Header */
@@ -87,7 +47,6 @@
             align-items: center;
             flex-shrink: 0;
             gap: 12px;
-            cursor: grab;
         }
 
         #header-avatar {
@@ -106,20 +65,6 @@
             margin: 0;
             font-size: 18px;
             font-weight: 600;
-        }
-
-        #close-btn {
-            margin-left: auto;
-            background: none;
-            border: none;
-            color: var(--font-color);
-            font-size: 24px;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-        #close-btn:hover {
-            opacity: 1;
         }
 
         /* Messages Area */
@@ -221,6 +166,7 @@
             border-top: 1px solid #dde1e6;
             padding: 15px 20px;
             background-color: white;
+            flex-shrink: 0; /* Prevents input from shrinking */
         }
 
         #chat-input-form {
@@ -260,21 +206,16 @@
 </head>
 <body>
 
-    <div id="chatbot-opener">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="#172b4d" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
-    </div>
-
     <div id="chatbot-container">
         <div id="chat-header">
             <div id="header-avatar">S</div>
             <h3>Solix AI Assistant</h3>
-            <button id="close-btn">&times;</button>
         </div>
         <div id="chat-messages">
-            </div>
+        </div>
         <div id="chat-input-container">
             <form id="chat-input-form">
-                <input type="text" id="user-input" placeholder="Ask about services, experience..." autocomplete="off">
+                <input type="text" id="user-input" placeholder="Ask me anything about Solix.cc..." autocomplete="off">
                 <button type="submit" id="send-btn">&#10148;</button>
             </form>
         </div>
@@ -283,19 +224,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // DOM Elements
-            const chatbotOpener = document.getElementById('chatbot-opener');
-            const chatbotContainer = document.getElementById('chatbot-container');
-            const closeBtn = document.getElementById('close-btn');
             const chatInputForm = document.getElementById('chat-input-form');
             const userInput = document.getElementById('user-input');
             const chatMessages = document.getElementById('chat-messages');
-            const chatHeader = document.getElementById('chat-header');
-
-            let conversationStarted = false;
 
             // --- Event Listeners ---
-            closeBtn.addEventListener('click', toggleChatbot);
-
             chatInputForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const messageText = userInput.value.trim();
@@ -307,17 +240,9 @@
             });
 
             // --- Core Functions ---
-            function toggleChatbot() {
-                chatbotContainer.classList.toggle('open');
-                if (chatbotContainer.classList.contains('open') && !conversationStarted) {
-                    startConversation();
-                    conversationStarted = true;
-                }
-            }
-
             function startConversation() {
                 const welcomeMessage = {
-                    text: "Welcome to Solix.cc! I'm the AI assistant for Coen Zweers, an energetic and results-driven IT specialist. How can I help you today?",
+                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently ${new Date().toLocaleTimeString('en-US', {timeZone: 'Europe/Amsterdam', hour: '2-digit', minute:'2-digit'})} in Amsterdam. How can I help you today?`,
                     chips: ["What services does Solix offer?", "Tell me about Coen's experience", "How do I get in touch?"]
                 };
                 appendMessage(welcomeMessage.text, 'bot', welcomeMessage.chips);
@@ -331,144 +256,6 @@
                     appendMessage(botResponse.text, 'bot', botResponse.chips);
                 }, 1200);
             }
-            
-            // --- START: Draggable Chat Window Logic ---
-            let isDragging = false;
-            let offsetX, offsetY;
-
-            const dragStart = (e) => {
-                isDragging = true;
-                chatHeader.style.cursor = 'grabbing';
-                document.body.style.userSelect = 'none';
-
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-                
-                const rect = chatbotContainer.getBoundingClientRect();
-                if (!chatbotContainer.style.top) {
-                    chatbotContainer.style.top = `${rect.top}px`;
-                    chatbotContainer.style.left = `${rect.left}px`;
-                    chatbotContainer.style.right = '';
-                    chatbotContainer.style.bottom = '';
-                }
-
-                offsetX = clientX - chatbotContainer.offsetLeft;
-                offsetY = clientY - chatbotContainer.offsetTop;
-
-                document.addEventListener('mousemove', dragging);
-                document.addEventListener('mouseup', dragEnd);
-                document.addEventListener('touchmove', dragging, { passive: false });
-                document.addEventListener('touchend', dragEnd);
-            };
-
-            const dragging = (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-                
-                let newLeft = clientX - offsetX;
-                let newTop = clientY - offsetY;
-
-                const containerWidth = chatbotContainer.offsetWidth;
-                const containerHeight = chatbotContainer.offsetHeight;
-                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - containerWidth));
-                newTop = Math.max(0, Math.min(newTop, window.innerHeight - containerHeight));
-
-                chatbotContainer.style.left = `${newLeft}px`;
-                chatbotContainer.style.top = `${newTop}px`;
-            };
-
-            const dragEnd = () => {
-                isDragging = false;
-                chatHeader.style.cursor = 'grab';
-                document.body.style.userSelect = '';
-
-                document.removeEventListener('mousemove', dragging);
-                document.removeEventListener('mouseup', dragEnd);
-                document.removeEventListener('touchmove', dragging);
-                document.removeEventListener('touchend', dragEnd);
-            };
-
-            chatHeader.addEventListener('mousedown', dragStart);
-            chatHeader.addEventListener('touchstart', dragStart, { passive: false });
-            // --- END: Draggable Chat Window Logic ---
-
-            // --- START: Draggable & Clickable Chatbot Opener Logic ---
-            let isOpenerDragging = false;
-            let openerMovedSinceMouseDown = false;
-            let openerOffsetX, openerOffsetY;
-
-            const openerDragStart = (e) => {
-                openerMovedSinceMouseDown = false;
-                isOpenerDragging = true;
-                chatbotOpener.style.cursor = 'grabbing';
-                document.body.style.userSelect = 'none';
-
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-
-                const rect = chatbotOpener.getBoundingClientRect();
-                if (!chatbotOpener.style.top) {
-                    chatbotOpener.style.top = `${rect.top}px`;
-                    chatbotOpener.style.left = `${rect.left}px`;
-                    chatbotOpener.style.right = '';
-                    chatbotOpener.style.bottom = '';
-                }
-
-                openerOffsetX = clientX - chatbotOpener.offsetLeft;
-                openerOffsetY = clientY - chatbotOpener.offsetTop;
-
-                document.addEventListener('mousemove', openerDragging);
-                document.addEventListener('mouseup', openerDragEnd);
-                document.addEventListener('touchmove', openerDragging, { passive: false });
-                document.addEventListener('touchend', openerDragEnd);
-            };
-
-            const openerDragging = (e) => {
-                if (!isOpenerDragging) return;
-                openerMovedSinceMouseDown = true;
-                e.preventDefault();
-
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
-
-                let newLeft = clientX - openerOffsetX;
-                let newTop = clientY - openerOffsetY;
-
-                const openerWidth = chatbotOpener.offsetWidth;
-                const openerHeight = chatbotOpener.offsetHeight;
-                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - openerWidth));
-                newTop = Math.max(0, Math.min(newTop, window.innerHeight - openerHeight));
-
-                chatbotOpener.style.left = `${newLeft}px`;
-                chatbotOpener.style.top = `${newTop}px`;
-            };
-
-            const openerDragEnd = () => {
-                isOpenerDragging = false;
-                chatbotOpener.style.cursor = 'pointer';
-                document.body.style.userSelect = '';
-
-                document.removeEventListener('mousemove', openerDragging);
-                document.removeEventListener('mouseup', openerDragEnd);
-                document.removeEventListener('touchmove', openerDragging);
-                document.removeEventListener('touchend', openerDragEnd);
-            };
-
-            chatbotOpener.addEventListener('click', (e) => {
-                if (openerMovedSinceMouseDown) {
-                    e.preventDefault();
-                } else {
-                    toggleChatbot();
-                }
-            });
-            
-            chatbotOpener.addEventListener('mousedown', openerDragStart);
-            chatbotOpener.addEventListener('touchstart', openerDragStart, { passive: false });
-             // --- END: Draggable & Clickable Chatbot Opener Logic ---
-
 
             // --- DOM Manipulation ---
             function appendMessage(text, sender, chips = []) {
@@ -610,6 +397,9 @@
                     chips: ["Services", "Experience", "Contact"]
                 };
             }
+
+            // Start the conversation as soon as the page loads
+            startConversation();
         });
     </script>
 </body>
