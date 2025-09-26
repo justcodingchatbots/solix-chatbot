@@ -70,6 +70,7 @@
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
+            min-height: 0; /* ADDED: Improves flexbox resilience */
         }
         
         .message-wrapper {
@@ -114,7 +115,6 @@
             max-width: 100%;
         }
 
-        /* ADDED: Container for Calendly widget */
         .calendly-embed-container {
             margin-top: 10px;
             border-radius: var(--border-radius-lg);
@@ -225,7 +225,8 @@
 
     <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        // MODIFIED: Switched to the 'load' event to fix Google Sites embed issue
+        window.addEventListener('load', () => {
             const chatInputForm = document.getElementById('chat-input-form');
             const userInput = document.getElementById('user-input');
             const chatMessages = document.getElementById('chat-messages');
@@ -242,7 +243,7 @@
 
             function startConversation() {
                 const welcomeMessage = {
-                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:08 PM in Amsterdam. How can I help you today?`,
+                    text: `Hello! I'm the Solix AI Assistant, representing Coen Zweers. It is currently 2:34 PM in Amsterdam. How can I help you today?`,
                     chips: ["What services does Solix offer?", "Tell me about Coen's experience", "Book an introduction"]
                 };
                 appendMessage('bot', welcomeMessage);
@@ -257,7 +258,6 @@
                 }, 1200);
             }
 
-            // --- MODIFIED: appendMessage function to handle HTML embeds ---
             function appendMessage(sender, response) {
                 const { text, chips = [], htmlContent = null } = response;
 
@@ -279,7 +279,6 @@
                     messageContainer.appendChild(messageContent);
                 }
                 
-                // If there's HTML content (like Calendly), create a container for it
                 if (htmlContent) {
                     const embedContainer = document.createElement('div');
                     embedContainer.className = 'calendly-embed-container';
@@ -340,34 +339,18 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // --- MODIFIED: Chatbot brain to include Calendly embed ---
             function getBotResponse(userText) {
                 const text = userText.toLowerCase();
 
-                // --- MODIFIED: Contact intent now returns HTML content ---
                 const contactIntent = {
                     keywords: ['contact', 'email', 'book', 'call', 'available', 'touch'],
                     response: {
                         text: `Of course. The most effective way to connect is to schedule an introduction call directly in my calendar below.`,
-                        htmlContent: `
-                            <div class="calendly-inline-widget" 
-                                 data-url="https://calendly.com/coenzweers-solix/introduction" 
-                                 style="min-width:320px;height:700px;">
-                            </div>
-                        `,
+                        htmlContent: `<div class="calendly-inline-widget" data-url="https://calendly.com/coenzweers-solix/introduction" style="min-width:320px;height:700px;"></div>`,
                         chips: ["What are your services?", "Thanks!"]
                     }
                 };
                 
-                const intents = [
-                    contactIntent, // Using the new contact intent
-                    {
-                        keywords: ['solix', 'company', 'about you'],
-                        response: { /* ... other intents ... */ }
-                    },
-                    // ... include all other intents here from the previous version ...
-                ];
-                // FAKE SPREAD for brevity
                 const fullIntents = [
                     contactIntent,
                     {
