@@ -2,240 +2,229 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Solix.cc | AI Assistant with CV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Solix Technologies | Enterprise Content Services</title>
   <style>
-    :root {
-      --primary-color: #ffd100;
-      --secondary-color: #f1f3f4;
-      --bot-message-bg: #ffffff;
-      --user-message-bg: #fff8e1;
-      --font-color: #172b4d;
-      --font-color-light: #6b778c;
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      --border-radius-lg: 0;
-      --border-radius-sm: 0;
+    /* --- Basic site styles (simplified) --- */
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f1f3f4; color: #172b4d;
+      line-height: 1.6;
     }
-    html, body {
-      width: 100vw;
-      height: 100%;
-      min-height: 100dvh;
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-family);
-      background: var(--secondary-color);
-      box-sizing: border-box;
-      overscroll-behavior: none;
+    header {
+      background: #ffd100; padding: 16px 40px;
+      font-weight: 700; font-size: 24px;
     }
-    #chatbot-container {
+    main { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    section { margin-bottom: 50px; }
+    h1, h2 { margin: 0 0 16px; }
+    button.cta {
+      background: #172b4d; color: #ffd100; border: none; padding: 12px 24px;
+      font-size: 18px; cursor: pointer; border-radius: 6px;
+    }
+    /* --- Chatbot styles --- */
+    #chatbot-wrapper {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw;
-      height: 100dvh;
-      background: var(--secondary-color);
+      bottom: 20px; right: 20px;
+      width: 350px; max-width: 90vw;
+      height: 480px; max-height: 70vh;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      background: white;
       display: flex;
       flex-direction: column;
-      min-height: 0;
-      z-index: 9999;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transform: translateY(0);
+      transition: transform 0.3s ease;
     }
-    #chat-header {
-      background-color: var(--primary-color);
-      color: var(--font-color);
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-      min-height: 56px;
-    }
-    #header-avatar {
-      width: 40px; height: 40px; border-radius: 50%; background-color: rgba(0,0,0,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 20px; flex-shrink: 0;
-    }
-    #chat-header h3 { margin: 0; font-size: 18px; font-weight: 600; }
-    #chat-messages {
-      flex: 1 1 0%;
-      min-height: 0;
-      overflow-y: auto;
-      background: var(--secondary-color);
-      padding: 16px;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-    }
-    .message-wrapper { display: flex; margin-bottom: 20px; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .bot-message-wrapper { justify-content: flex-start; }
-    .user-message-wrapper { justify-content: flex-end; }
-    .bot-avatar {
-      width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-color);
-      color: var(--font-color); display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 16px; margin-right: 12px; flex-shrink: 0;
-    }
-    .message-content {
+    #chatbot-header {
+      background: #ffd100;
       padding: 12px 16px;
-      border-radius: 8px;
-      line-height: 1.5;
-      word-wrap: break-word;
-      max-width: 100%;
-      box-sizing: border-box;
+      font-weight: 700;
+      font-size: 18px;
+      color: #172b4d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
     }
-    .message-container { display: flex; flex-direction: column; max-width: calc(100% - 44px); }
-    .bot-message-wrapper .message-container { align-items: flex-start; }
-    .user-message-wrapper .message-container { align-items: flex-end; max-width: 85%; }
-    .bot-message-content { background-color: var(--bot-message-bg); border-bottom-left-radius: 8px; }
-    .user-message-content { background-color: var(--user-message-bg); border-bottom-right-radius: 8px; }
-    .message-time { font-size: 11px; color: var(--font-color-light); margin-top: 6px; padding: 0 5px; }
-    .typing-indicator span { height: 8px; width: 8px; margin: 0 2px; background-color: #b0b8c8; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite ease-in-out both; }
-    @keyframes bounce { 0%,80%,100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+    #chatbot-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      font-weight: bold;
+      color: #172b4d;
+      cursor: pointer;
+    }
+    #chatbot-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 0;
+    }
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      border-top: 1px solid #eee;
+      box-sizing: border-box;
+      background: #fefefe;
+    }
     #chat-input-container {
-      border-top: 1px solid #dde1e6;
-      background-color: #fff;
-      padding: 15px 20px;
-      flex-shrink: 0;
+      border-top: 1px solid #eee;
+      padding: 12px 16px;
+      background: #fff;
     }
     #chat-input-form {
       display: flex;
-      align-items: center;
-      width: 100%;
       gap: 10px;
     }
     #user-input {
       flex: 1;
+      padding: 8px 12px;
       border: 1px solid #ccc;
       border-radius: 20px;
-      padding: 10px 18px;
-      font-size: 14px;
+      font-size: 16px;
       outline: none;
-      transition: border-color 0.2s;
-      background: #fff;
-      min-width: 0;
-      width: 1px;
     }
     #send-btn {
-      background-color: var(--primary-color);
-      color: var(--font-color);
+      background-color: #ffd100;
       border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
+      padding: 0 14px;
+      border-radius: 20px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s;
+      font-weight: bold;
+      font-size: 18px;
+      color: #172b4d;
+    }
+    /* Hide chatbot content when closed */
+    #chatbot-wrapper.closed #chatbot-content,
+    #chatbot-wrapper.closed #chat-input-container {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <div id="chatbot-container">
-    <div id="chat-header">
-      <div id="header-avatar">S</div>
-      <h3 id="chat-title">Solix AI Assistant</h3>
+  <header>Solix Technologies</header>
+  <main>
+    <section>
+      <h1>Enterprise Content Services</h1>
+      <p>Solix ECS offers sales and marketing teams a cloud-native platform for centralized content management, powered by AI and automation.</p>
+      <button class="cta">Start Free Trial</button>
+    </section>
+    <section>
+      <h2>Key Benefits</h2>
+      <ul>
+        <li>Eliminate content silos</li>
+        <li>Increase collaboration</li>
+        <li>Improve content security</li>
+        <li>Enhance content automation</li>
+      </ul>
+    </section>
+  </main>
+
+  <!-- Chatbot widget -->
+  <div id="chatbot-wrapper">
+    <div id="chatbot-header">
+      Solix AI Assistant
+      <button id="chatbot-close-btn" aria-label="Close chatbot">×</button>
     </div>
-    <div id="chat-messages"></div>
-    <div id="chat-input-container">
-      <form id="chat-input-form">
-        <input type="text" id="user-input" autocomplete="off" placeholder="Ask me about Coen's skills or project experience" />
-        <button type="submit" id="send-btn">➤</button>
-      </form>
+    <div id="chatbot-content">
+      <div id="chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+      <div id="chat-input-container">
+        <form id="chat-input-form" aria-label="Chat input form">
+          <input type="text" id="user-input" autocomplete="off" aria-label="User question input" placeholder="Ask me about Coen's CV, experience, skills..." />
+          <button type="submit" id="send-btn" aria-label="Send message">➤</button>
+        </form>
+      </div>
     </div>
   </div>
-  <script>
-    window.addEventListener('load', () => {
-      const chatInputForm = document.getElementById('chat-input-form');
-      const userInput = document.getElementById('user-input');
-      const chatMessages = document.getElementById('chat-messages');
-      const chatTitle = document.getElementById('chat-title');
 
-      const knowledgeBase = [
-        {
-          id: 'profile',
-          keywords: ['profile', 'about you', 'summary', 'introduction', 'who are you', 'personality'],
-          response: `Energetic, opportunity spotter and enjoying life to the fullest! Seasoned IT specialist with structured working, people-first mentality and results driven.`
-        },
-        {
-          id: 'elipslife',
-          keywords: ['elipslife', 'head of business services', 'erp project', 'insurance', 'project manager', 'digital products'],
-          response: `At elipsLife (07/2024–07/2025), Coen was Head of Business Services and IT Project Manager. He led a team of seven business experts and project managers focused on servicing the business, process mapping, and developing new digital products. He managed a large ERP system implementation across the Netherlands, Luxembourg, Switzerland, and Poland, with a successful go-live on May 12, 2025. This included a new core insurance platform, finance application platform (FinanceHub), replacement of document generation and archive systems, and migration of the entire portfolio in the Netherlands. He also led strategic project management and change communication.`
-        },
-        {
-          id: 'kramp',
-          keywords: ['kramp', 'pmо', 'transformation', 'target operating model', 'europe', 'change management'],
-          response: `At Kramp (09/2023–06/2024), Coen was Transformation Management Officer (PMO) for the Target Operating Model program, responsible for project management, communication, and change across Europe. He prepared executive board meetings, tracked progress of 15 workstreams and delivered new working methods including a European cluster model and product model structure.`
-        },
-        {
-          id: 'sunrock',
-          keywords: ['sunrock', 'product owner', 'product manager', 'solar parks', 'digital products', 'jira', 'figma'],
-          response: `At Sunrock (06/2022–07/2023), Coen was IT Product Manager and Product Owner in the Innovation & IT department. He led project management and launch of a customer portal and a digital design tool for PV systems including energy and battery storage solutions, boosting customer engagement and revenue. He developed innovation strategy, managed backlogs and tasks in Jira, designed in Figma, and collaborated closely with teams to reduce development time.`
-        },
-        {
-          id: 'abnamro',
-          keywords: ['abn amro', 'agile coach', 'scrum master', 'agile mindset', 'scrum teams', 'retail banking'],
-          response: `At ABN AMRO (09/2021–06/2022), Coen worked as Agile Coach and Scrum Master for three teams totaling 25 members, improving agile ways of working, coordinating scrum ceremonies and replacing product owners temporarily. He also coordinated a monitoring dashboard project to reduce issue detection time.`
-        },
-        {
-          id: 'accenture',
-          keywords: ['accenture', 'strategy consultant', 'product owner', 'rabobank', 'strategy', 'rpa', 'blockchain', 'automation'],
-          response: `From 10/2017 to 08/2021, Coen was a Strategy & Technology Consultant at Accenture with project experience including IT Product Owner for Rabobank's AI Monitoring, Strategy Consultant for Athlon and Nationale Nederlanden, Business Analyst for Rabobank and APG, and Product Owner for ING's RPA and AI automation team. He led deliveries of AI monitoring solutions, process automations, blockchain pension solutions, and fraud management systems.`
-        },
-        {
-          id: 'education',
-          keywords: ['education', 'study', 'university', 'msc', 'bsc', 'marketing analytics', 'industrial engineering', 'exchange'],
-          response: `Coen holds an MSc in Marketing Analytics and Data Science from University of Groningen (2015–2017). He also completed a Pre-MSc Marketing, an international student exchange program at Hanyang University in South Korea, and a BSc in Industrial Engineering & Management from Hanze University Groningen.`
-        },
-        {
-          id: 'skills',
-          keywords: ['skills', 'software', 'certificates', 'languages', 'rpa', 'blockchain', 'scrum', 'product owner'],
-          response: `Key skills include Strategy & Technology Consulting, IT Project Management, Agile Scrum, Product Management, Blockchain & Distributed Ledger Technology, RPA, NLP, and UX. Experienced with MS Office, MS Visio, Automation Anywhere, Jira, Confluence, Azure DevOps, Figma, ServiceNow, Splunk dashboarding. Certified PSPO II, PSM II, SAFe Agilist, SAFe Advanced Scrum Master, Automation Anywhere Advanced RPA Professional, and R3 Corda Developer. Languages: Dutch (native), English (full professional), German (limited).`
-        },
-        {
-          id: 'internships',
-          keywords: ['internship', 'vodafone', 'toll group', 'hooghoudt', 'marketing intelligence', 'supply chain'],
-          response: `Coen completed internships at Vodafone HQ in Marketing Intelligence, Toll Group in supply chain optimisation for Nike, and Hooghoudt Jenever & Gin in production line redesign and operational excellence.`
-        },
+  <script>
+    (function() {
+      const kb = [
+        { id: 'profile', keywords: ['profile','about','summary','personality'], response: 'Energetic, opportunity spotter and enjoying life to the fullest! Seasoned IT specialist with structured way of working, people-first mentality, and results-driven.' },
+        { id: 'elipslife', keywords: ['elipslife','head of business services','erp','insurance','project manager'], response: 'At elipsLife (07/2024–07/2025), Coen led a team of seven focused on business servicing, process mapping, and digital product development with a large ERP go-live on May 12, 2025.' },
+        { id: 'kramp', keywords: ['kramp','transformation','pmo','target operating model'], response: 'At Kramp (09/2023–06/2024), Coen was PMO for Target Operating Model, managing communications and change across 15 workstreams in Europe.' },
+        { id: 'sunrock', keywords: ['sunrock','product owner','solar parks','jira','figma'], response: 'At Sunrock (06/2022–07/2023), Coen managed product development & launch of digital customer portal and PV system design tool, using Jira and Figma.' },
+        { id: 'abnamro', keywords: ['abnamro','agile coach','scrum master','scrum'], response: 'At ABN AMRO (09/2021–06/2022), Coen was Agile Coach and Scrum Master for three teams (25 members), applying full Scrum framework.' },
+        { id: 'accenture', keywords: ['accenture','strategy consultant','rpa','ai','product owner','blockchain'], response: 'At Accenture (2017–2021), Coen worked on AI monitoring, RPA, blockchain pension solutions, and fraud management systems across various major clients.' },
+        { id: 'education', keywords: ['education','msc','bsc','university','hanze','groningen'], response: 'Coen holds MSc in Marketing Analytics and Data Science from University of Groningen, and BSc in Industrial Engineering & Management from Hanze University.' },
+        { id: 'skills', keywords: ['skills','software','certificates','rpa','blockchain','scrum','languages'], response: 'Skills include consulting, project management, agile, blockchain, RPA, NLP, UX design. Certified PSPO II, PSM II, SAFe Agilist, and advanced RPA professional. Languages: Dutch, English, German.' },
+        { id: 'internships', keywords: ['internship','vodafone','toll group','hooghoudt'], response: 'Internships at Vodafone HQ in marketing intelligence, Toll Group supply chain for Nike, and Hooghoudt Gin production line redesign.' }
       ];
 
-      // Basic keyword matching (improve as needed)
-      function getResponseForInput(text) {
-        const lower = text.toLowerCase();
-        for (const item of knowledgeBase) {
-          for (const keyword of item.keywords) {
-            if (lower.includes(keyword)) return item.response;
-          }
-        }
-        return "Sorry, I can't answer that specifically yet. Please ask about experience, education, skills, or projects.";
-      }
+      const chatWrapper = document.getElementById('chatbot-wrapper');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatInputForm = document.getElementById('chat-input-form');
+      const userInput = document.getElementById('user-input');
+      const closeBtn = document.getElementById('chatbot-close-btn');
 
-      function appendMessage(sender, message) {
+      function appendMessage(sender, msg) {
         const wrapper = document.createElement('div');
         wrapper.className = `message-wrapper ${sender}-message-wrapper`;
-        if (sender === 'bot') {
-          wrapper.innerHTML = `<div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content">${message}</div></div>`;
+        const container = document.createElement('div');
+        container.className = 'message-container';
+        const content = document.createElement('div');
+        content.className = 'message-content ' + (sender === 'bot' ? 'bot-message-content' : 'user-message-content');
+
+        if(sender === 'bot') {
+          content.innerHTML = msg;
         } else {
-          wrapper.innerHTML = `<div class="message-container"><div class="message-content user-message-content">${message}</div></div>`;
+          content.textContent = msg;
         }
+
+        container.appendChild(content);
+        if(sender === 'bot') {
+          const avatar = document.createElement('div');
+          avatar.className = 'bot-avatar';
+          avatar.textContent = 'S';
+          wrapper.appendChild(avatar);
+        }
+        wrapper.appendChild(container);
         chatMessages.appendChild(wrapper);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
 
-      chatInputForm.onsubmit = e => {
+      function getResponse(query) {
+        const text = query.toLowerCase();
+        for (let item of kb) {
+          if(item.keywords.some(k => text.includes(k))) {
+            return item.response;
+          }
+        }
+        return `Sorry, I don't have information on that. Please book a call or email <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a> for more details.`;
+      }
+
+      chatInputForm.addEventListener('submit', e => {
         e.preventDefault();
         const text = userInput.value.trim();
-        if (!text) return;
+        if(!text) return;
         appendMessage('user', text);
         userInput.value = '';
         setTimeout(() => {
-          const response = getResponseForInput(text);
-          appendMessage('bot', response);
-        }, 500);
-      };
+          appendMessage('bot', getResponse(text));
+        }, 400);
+      });
 
-      // Welcome message
-      appendMessage('bot', "Hello! Ask me anything about Coen Zweers' skills, projects, experience, education or certifications.");
-    });
+      // Initial greeting
+      appendMessage('bot', 'Hello! Ask me anything about Coen Zweers’ CV, experience, education, skills, certifications, and internships.');
+
+      // Close button - toggle chatbot visibility (optional)
+      closeBtn.addEventListener('click', () => {
+        if(chatWrapper.style.transform === 'translateY(100%)') {
+          chatWrapper.style.transform = 'translateY(0)';
+          closeBtn.textContent = '×';
+        } else {
+          chatWrapper.style.transform = 'translateY(100%)';
+          closeBtn.textContent = '▲';
+        }
+      });
+
+      // Start open
+      chatWrapper.style.transform = 'translateY(0)';
+    })();
   </script>
 </body>
 </html>
