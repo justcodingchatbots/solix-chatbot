@@ -44,7 +44,6 @@
         .lang-chip { background-color: transparent; color: var(--font-color-light); font-size: 12px; border: 1px solid #dde1e6; padding: 4px 10px; }
         .booking-link { color: #c7a100; font-weight: bold; text-decoration: underline; }
         .booking-link:hover { color: #997b00; }
-        /* --- NEW STYLES FOR CONTACT FORM --- */
         .contact-form-container { background-color: #fff; padding: 16px; border-radius: var(--border-radius-lg); margin-top: 10px; border: 1px solid #dde1e6;}
         .contact-form-container label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; }
         .contact-form-container input, .contact-form-container textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: var(--border-radius-sm); font-family: var(--font-family); font-size: 14px; box-sizing: border-box; margin-bottom: 12px; }
@@ -76,15 +75,18 @@
                 en: {
                     title: "Solix AI Assistant",
                     placeholder: "e.g., Tell me about your Scrum Master experience",
-                    welcome: { text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 5:23 PM in Amsterdam. I am trained on his CV and can answer specific questions about skills, projects, and services. How can I help?`, chips: ["What are your main services?", "Give me a project example", "Do you have Scrum Master experience?"], langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }},
+                    welcome: { text: `Hello! I'm the AI assistant for Coen Zweers. It's currently 5:26 PM in Amsterdam. I am trained on his CV and can answer specific questions about skills, projects, and services. How can I help?`, chips: ["What are your main services?", "Give me a project example", "How do I get in touch?"], langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }},
                     formContent: {
                         intro: "Please fill out the form below. Clicking 'Send Email' will open your default email client with your message ready to send.",
                         nameLabel: "Name", emailLabel: "Email", requestLabel: "Your Request", buttonText: "✉️ Send Email"
                     },
                     intents: [
-                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting'], response: { text: `The best next step is to schedule a brief introductory call. You can book a time that works for you directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Book an Introduction Call</a>`, chips: ["What are the services?", "Thanks!"] }},
+                        { id: 'contact', keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'touch'], response: { 
+                            // --- MODIFIED RESPONSE ---
+                            text: `The most effective way to connect is to schedule a brief introductory call. You can book a time directly using this link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Book an Introduction Call</a><br><br>Alternatively, you can send a direct email to:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`,
+                            chips: ["What are the services?", "Thanks!"] 
+                        }},
                         { id: 'request_form', keywords: ['yes, send a message', 'message form'], response: { form: true }},
-                        // Other intents
                         { id: 'services_overview', keywords: ['service', 'offer', 'what you do', 'what do you do', 'capabilities', 'help with'], response: { text: `Coen focuses on two main areas: short-term Strategic & Transformation projects, and longer-term Interim Leadership roles. Which area is more relevant for you?`, chips: ["Strategy & Transformation", "Interim Leadership"] }},
                         { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II).`, chips: ["What about Product Owner roles?", "Book a Call"] }},
                         { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`, chips: ["What about his work at elipsLife?", "Book a Call"] }},
@@ -97,15 +99,18 @@
                 nl: {
                     title: "Solix AI Assistent",
                     placeholder: "bv. Vertel over je Scrum Master ervaring",
-                    welcome: { text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 17:23 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`, chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Heb je Scrum Master ervaring?"], langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }},
+                    welcome: { text: `Hallo! Ik ben de AI-assistent van Coen Zweers. Het is momenteel 17:26 in Amsterdam. Ik kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`, chips: ["Wat zijn de hoofddiensten?", "Geef een projectvoorbeeld", "Hoe neem ik contact op?"], langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }},
                     formContent: {
                         intro: "Vul alstublieft het onderstaande formulier in. Als u op 'Verstuur E-mail' klikt, wordt uw standaard e-mailprogramma geopend met uw bericht.",
                         nameLabel: "Naam", emailLabel: "E-mailadres", requestLabel: "Uw Vraag of Verzoek", buttonText: "✉️ Verstuur E-mail"
                     },
                     intents: [
-                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { text: `De beste volgende stap is een korte kennismaking. U kunt direct een geschikt moment inplannen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Plan een Kennismakingsgesprek</a>`, chips: ["Wat zijn de diensten?", "Bedankt!"] }},
+                        { id: 'contact', keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'], response: { 
+                            // --- MODIFIED RESPONSE (DUTCH) ---
+                            text: `De meest effectieve manier om een gesprek te starten is door een kennismaking in te plannen. U kunt direct een geschikt moment kiezen via deze link:<br><br>🗓️ <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="booking-link">Plan een Kennismakingsgesprek</a><br><br>U kunt ook direct een e-mail sturen naar:<br>📧 <a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>`,
+                            chips: ["Wat zijn de diensten?", "Bedankt!"]
+                        }},
                         { id: 'request_form', keywords: ['ja, stuur een bericht', 'bericht versturen'], response: { form: true }},
-                        // Other intents
                         { id: 'services_overview', keywords: ['diensten', 'aanbod', 'wat doe je', 'helpen', 'mogelijkheden'], response: { text: `Coen focust op twee hoofdgebieden: Strategische & Transformatieprojecten (korte termijn), en Interim Leiderschapsrollen (lange termijn). Welk gebied is voor u het meest relevant?`, chips: ["Strategie & Transformatie", "Interim Leiderschap"] }},
                         { id: 'experience_scrum', keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'], response: { text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II).`, chips: ["En als Product Owner?", "Plan een gesprek"] }},
                         { id: 'experience_po', keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'], response: { text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`, chips: ["Vertel over zijn werk bij elipsLife?", "Plan een gesprek"] }},
@@ -135,7 +140,6 @@
                 return T.fallback;
             }
             
-            // --- UPDATED to handle 'form' response type ---
             function appendMessage(sender, response) {
                 const { text, chips = [], form = false, langSwitcher = null } = response;
                 const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
@@ -146,32 +150,13 @@
                 
                 if (form) {
                     const T_form = translations[currentLanguage].formContent;
-                    const formIntro = document.createElement('div');
-                    formIntro.className = 'message-content bot-message-content';
-                    formIntro.style.marginBottom = '10px';
-                    formIntro.innerHTML = T_form.intro;
-                    messageContainer.appendChild(formIntro);
-
-                    const formContainer = document.createElement('div');
-                    formContainer.className = 'contact-form-container';
-                    formContainer.innerHTML = `
-                        <form id="contact-form">
-                            <label for="contact-name">${T_form.nameLabel}</label>
-                            <input type="text" id="contact-name" name="name" required>
-                            <label for="contact-email">${T_form.emailLabel}</label>
-                            <input type="email" id="contact-email" name="email" required>
-                            <label for="contact-request">${T_form.requestLabel}</label>
-                            <textarea id="contact-request" name="request" required></textarea>
-                            <button type="submit" class="form-submit-btn">${T_form.buttonText}</button>
-                        </form>
-                    `;
+                    const formIntro = document.createElement('div'); formIntro.className = 'message-content bot-message-content'; formIntro.style.marginBottom = '10px'; formIntro.innerHTML = T_form.intro; messageContainer.appendChild(formIntro);
+                    const formContainer = document.createElement('div'); formContainer.className = 'contact-form-container';
+                    formContainer.innerHTML = `<form id="contact-form"><label for="contact-name">${T_form.nameLabel}</label><input type="text" id="contact-name" name="name" required><label for="contact-email">${T_form.emailLabel}</label><input type="email" id="contact-email" name="email" required><label for="contact-request">${T_form.requestLabel}</label><textarea id="contact-request" name="request" required></textarea><button type="submit" class="form-submit-btn">${T_form.buttonText}</button></form>`;
                     messageContainer.appendChild(formContainer);
-
                     formContainer.querySelector('#contact-form').addEventListener('submit', (e) => {
                         e.preventDefault();
-                        const name = e.target.name.value;
-                        const email = e.target.email.value;
-                        const request = e.target.request.value;
+                        const name = e.target.name.value; const email = e.target.email.value; const request = e.target.request.value;
                         const subject = `Inquiry from Solix.cc Chatbot - ${name}`;
                         const body = `Name: ${name}\nEmail: ${email}\n\nRequest:\n${request}`;
                         window.location.href = `mailto:coenzweers@solix.cc?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
