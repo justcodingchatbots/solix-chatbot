@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solix.cc | AI Assistant</title> <style>
+    <title>Solix.cc | AI Assistant</title>
+    <style>
         :root {
             --primary-color: #ffd100;
-            --secondary-color: #f4f5f7;
+            --secondary-color: #f1f3f4; /* UPDATED to match Google Sites "Level" Style 1 */
             --bot-message-bg: #ffffff;
             --user-message-bg: #fff8e1;
             --font-color: #172b4d;
@@ -18,7 +19,7 @@
 
         body {
             font-family: var(--font-family);
-            background-color: #f8f9fa;
+            background-color: transparent;
         }
 
         /* Chat Opener Button */
@@ -59,7 +60,7 @@
             max-width: 90vw;
             height: 75vh;
             max-height: 650px;
-            background-color: var(--secondary-color);
+            background-color: var(--secondary-color); /* This now uses the updated color */
             border-radius: var(--border-radius-lg);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             display: flex;
@@ -173,7 +174,7 @@
         .message-container {
             display: flex;
             flex-direction: column;
-            max-width: calc(100% - 44px); /* Account for avatar and margin */
+            max-width: calc(100% - 44px);
         }
         
         .bot-message-wrapper .message-container {
@@ -259,11 +260,6 @@
 </head>
 <body>
 
-    <div style="padding: 40px; text-align: center;">
-        <h1>Welcome to Solix.cc</h1>
-        <p>This is where the main content of the freelancer website goes.</p>
-    </div>
-
     <div id="chatbot-opener">
         <svg xmlns="http://www.w3.org/2000/svg" fill="#172b4d" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
     </div>
@@ -271,7 +267,8 @@
     <div id="chatbot-container">
         <div id="chat-header">
             <div id="header-avatar">S</div>
-            <h3>Solix AI Assistant</h3> <button id="close-btn">&times;</button>
+            <h3>Solix AI Assistant</h3>
+            <button id="close-btn">&times;</button>
         </div>
         <div id="chat-messages">
             </div>
@@ -333,10 +330,10 @@
                     removeTypingIndicator();
                     const botResponse = getBotResponse(userText);
                     appendMessage(botResponse.text, 'bot', botResponse.chips);
-                }, 1200); // Simulate bot "thinking" time
+                }, 1200);
             }
             
-            // --- START: Draggable Chatbot Logic ---
+            // --- Draggable Chatbot Logic ---
             let isDragging = false;
             let offsetX, offsetY;
 
@@ -348,7 +345,6 @@
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
                 
-                // Switch from bottom/right positioning to top/left for dragging
                 const rect = chatbotContainer.getBoundingClientRect();
                 if (!chatbotContainer.style.top) {
                     chatbotContainer.style.top = `${rect.top}px`;
@@ -376,7 +372,6 @@
                 let newLeft = clientX - offsetX;
                 let newTop = clientY - offsetY;
 
-                // Keep the chatbot within the viewport
                 const containerWidth = chatbotContainer.offsetWidth;
                 const containerHeight = chatbotContainer.offsetHeight;
                 newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - containerWidth));
@@ -399,33 +394,24 @@
 
             chatHeader.addEventListener('mousedown', dragStart);
             chatHeader.addEventListener('touchstart', dragStart, { passive: false });
-            // --- END: Draggable Chatbot Logic ---
-
 
             // --- DOM Manipulation ---
             function appendMessage(text, sender, chips = []) {
                 const messageWrapper = document.createElement('div');
                 messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
-
                 let avatarHtml = '';
                 if (sender === 'bot') {
                     avatarHtml = '<div class="bot-avatar">S</div>';
                 }
-
                 const messageContainer = document.createElement('div');
                 messageContainer.className = 'message-container';
-
                 const messageContent = document.createElement('div');
                 messageContent.className = `message-content ${sender}-message-content`;
-                messageContent.innerHTML = text; // Use innerHTML to render HTML tags like <br> and <a>
-
+                messageContent.innerHTML = text;
                 const messageTime = document.createElement('div');
                 messageTime.className = 'message-time';
                 messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
                 messageContainer.appendChild(messageContent);
-                
-                // Add suggestion chips if any
                 if (chips.length > 0) {
                     const chipsContainer = document.createElement('div');
                     chipsContainer.className = 'suggestion-chips';
@@ -434,7 +420,6 @@
                         chip.className = 'chip';
                         chip.textContent = chipText;
                         chip.onclick = () => {
-                            // Visually disable chips after one is clicked
                             chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none');
                             chip.style.backgroundColor = 'var(--primary-color)';
                             chip.style.color = 'var(--font-color)';
@@ -445,7 +430,6 @@
                     });
                     messageContainer.appendChild(chipsContainer);
                 }
-
                 messageContainer.appendChild(messageTime);
                 messageWrapper.innerHTML = avatarHtml;
                 messageWrapper.appendChild(messageContainer);
@@ -482,9 +466,7 @@
                 const calendlyLink = '<a href="https://calendly.com/coenzweers-solix/introduction" target="_blank">Book an Introduction Call</a>';
                 const emailLink = '<a href="mailto:coenzweers@solix.cc">coenzweers@solix.cc</a>';
 
-                // --- Define Intents ---
                 const intents = [
-                    // Contact & Availability
                     {
                         keywords: ['contact', 'email', 'book', 'call', 'available', 'touch'],
                         response: {
@@ -492,7 +474,6 @@
                             chips: ["What are Solix's services?", "Thanks!"]
                         }
                     },
-                    // About Solix
                     {
                         keywords: ['solix', 'company', 'about you'],
                         response: {
@@ -500,20 +481,13 @@
                             chips: ["Tell me about the services", "What is Coen's experience?"]
                         }
                     },
-                    // Services Overview
                     {
                         keywords: ['service', 'offer', 'what do you do', 'help with'],
                         response: {
-                            text: `Solix provides flexible support in four key areas:<br>
-                                🚀 Strategic Consultancy Projects<br>
-                                👔 Interim Leadership Roles<br>
-                                🔄 Change Management<br>
-                                ⚡ Agile Transformation Workshops<br><br>
-                                Which area interests you the most?`,
+                            text: `Solix provides flexible support in four key areas:<br>🚀 Strategic Consultancy Projects<br>👔 Interim Leadership Roles<br>🔄 Change Management<br>⚡ Agile Transformation Workshops<br><br>Which area interests you the most?`,
                             chips: ["Strategy", "Interim Leadership", "Change Management", "Workshops"]
                         }
                     },
-                    // Experience Overview (Interactive)
                     {
                         keywords: ['experience', 'background', 'cv', 'resume', 'worked'],
                         response: {
@@ -521,7 +495,6 @@
                             chips: ["Leadership Roles", "Product Management", "Consulting (Accenture)"]
                         }
                     },
-                    // Specific Experience Details
                     {
                         keywords: ['leadership'],
                         response: { text: `Coen has recently served as <strong>Head of Business Services (a.i.) at elipsLife</strong>, where he led a team of seven and managed a major international ERP system implementation. This demonstrates his capability to provide senior-level expertise and ensure business continuity.`, chips: ["Tell me about Sunrock", "How to contact Coen?"]}
@@ -534,7 +507,6 @@
                         keywords: ['consulting', 'accenture'],
                         response: { text: `During his four years as a <strong>Strategy & Technology Consultant at Accenture</strong>, Coen delivered projects for major clients like Rabobank, ING, and Athlon. His work involved AI Monitoring, RPA, Blockchain, and developing e-commerce value propositions.`, chips: ["What are his specific skills?", "Book a call"]}
                     },
-                    // Skills
                     {
                         keywords: ['skill', 'expertise', 'proficient'],
                         response: {
@@ -542,7 +514,6 @@
                             chips: ["Tell me about his experience", "How do I get in touch?"]
                         }
                     },
-                    // Greetings & Closings
                     {
                         keywords: ['hello', 'hi', 'hey'],
                         response: { text: "Hello there! How can I help you learn more about Solix and what Coen can offer?", chips: ["Services", "Experience", "Contact"] }
@@ -553,14 +524,12 @@
                     },
                 ];
 
-                // --- Find Matching Intent ---
                 for (const intent of intents) {
                     if (intent.keywords.some(keyword => text.includes(keyword))) {
                         return intent.response;
                     }
                 }
 
-                // Default Fallback Response
                 return {
                     text: "I'm best at answering questions about Solix's services, Coen's experience, and how to get in touch. How about we start with one of those?",
                     chips: ["Services", "Experience", "Contact"]
