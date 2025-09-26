@@ -151,4 +151,48 @@
             }
 
             function getBotResponse(userText) {
-                const text
+                const text = userText.toLowerCase();
+                const T = translations[currentLanguage];
+                for (const intent of T.intents) {
+                    if (intent.keywords.some(keyword => text.includes(keyword))) { return intent.response; }
+                }
+                for (const redirect of T.fallback.topicRedirects) {
+                    if (redirect.topics.some(topic => text.includes(topic))) {
+                        const matchedIntent = T.intents.find(intent => intent.id === redirect.intentId);
+                        if (matchedIntent) return matchedIntent.response;
+                    }
+                }
+                return T.fallback.generic;
+            }
+
+            chatInputForm.addEventListener('submit', (e) => { e.preventDefault(); const messageText = userInput.value.trim(); if (messageText) { appendMessage('user', { text: messageText }); userInput.value = ''; handleBotResponse(messageText); } });
+            function handleBotResponse(userText) { showTypingIndicator(); setTimeout(() => { removeTypingIndicator(); const botResponse = getBotResponse(userText); appendMessage('bot', botResponse); }, 1200); }
+            function appendMessage(sender, response) {
+                const { text, chips = [], langSwitcher = null } = response;
+                const messageWrapper = document.createElement('div'); messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
+                let avatarHtml = ''; if (sender === 'bot') { avatarHtml = '<div class="bot-avatar">S</div>'; }
+                const messageContainer = document.createElement('div'); messageContainer.className = 'message-container';
+                if (text) { const messageContent = document.createElement('div'); messageContent.className = `message-content ${sender}-message-content`; messageContent.innerHTML = text; messageContainer.appendChild(messageContent); }
+                if (chips.length > 0) {
+                    const chipsContainer = document.createElement('div'); chipsContainer.className = 'suggestion-chips';
+                    chips.forEach(chipText => {
+                        const chip = document.createElement('div'); chip.className = 'chip'; chip.textContent = chipText;
+                        chip.onclick = () => { chipsContainer.querySelectorAll('.chip').forEach(c => c.style.pointerEvents = 'none'); chip.style.backgroundColor = 'var(--primary-color)'; chip.style.color = 'var(--font-color)'; appendMessage('user', { text: chipText }); handleBotResponse(chipText); };
+                        chipsContainer.appendChild(chip);
+                    });
+                    messageContainer.appendChild(chipsContainer);
+                }
+                if (langSwitcher) { const langContainer = document.createElement('div'); langContainer.className = 'language-switcher'; const langChip = document.createElement('div'); langChip.className = 'chip lang-chip'; langChip.textContent = langSwitcher.text; langChip.onclick = () => setLanguage(langSwitcher.lang); langContainer.appendChild(langChip); messageContainer.appendChild(langContainer); }
+                const messageTime = document.createElement('div'); messageTime.className = 'message-time'; messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); messageContainer.appendChild(messageTime);
+                messageWrapper.innerHTML = avatarHtml; messageWrapper.appendChild(messageContainer);
+                chatMessages.appendChild(messageWrapper); scrollToBottom();
+            }
+            function showTypingIndicator() { const indicatorHtml = `<div class="message-wrapper bot-message-wrapper" id="typing-indicator"><div class="bot-avatar">S</div><div class="message-container"><div class="message-content bot-message-content"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div></div>`; chatMessages.insertAdjacentHTML('beforeend', indicatorHtml); scrollToBottom(); }
+            function removeTypingIndicator() { const indicator = document.getElementById('typing-indicator'); if (indicator) indicator.remove(); }
+            function scrollToBottom() { chatMessages.scrollTop = chatMessages.scrollHeight; }
+
+            setLanguage(currentLanguage);
+        });
+    </script>
+</body>
+</html>
