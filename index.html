@@ -410,10 +410,11 @@
             },
             {
               id: 'contact',
-              keywords: ['contact', 'call', 'introduction', 'schedule', 'meeting', 'appointment'],
+              keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'appointment'],
               response: {
-                text: `The best next step is to schedule a brief introductory call with Coen. You can do that by clicking the link below: <br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a><br> Or you can email directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
-              }
+                text: `The best next step is to schedule a brief introductory call with Coen. You can do that by clicking the link below:<br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a><br> Or you can email directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
+              },
+              chips: ["Send Email"]
             },
             {
               id: 'thanks',
@@ -432,7 +433,7 @@
               { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
               { topics: ['experience', 'work', 'history', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
               { topics: ['scrum', 'agile'], intentId: 'experience_scrum' },
-              { topics: ['contact', 'call', 'schedule', 'appointment'], intentId: 'contact' }
+              { topics: ['contact', 'book', 'call', 'schedule', 'appointment'], intentId: 'contact' }
             ]
           }
         },
@@ -490,7 +491,8 @@
               keywords: ['contact', 'gesprek', 'kennismaking', 'plannen', 'afspraak'],
               response: {
                 text: `De beste volgende stap is een korte kennismaking met Coen. U kunt dat doen door op de onderstaande link te klikken: <br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">Plan een gesprek</a><br> Of u kunt direct mailen via <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
-              }
+              },
+              chips: ["Stuur e-mail"]
             },
             {
               id: 'thanks',
@@ -587,7 +589,24 @@
             chip.onclick = () => {
               disableChips(chipsContainer);
               appendMessage('user', { text: escapeHTML(c) });
-              handleBotResponse(c);
+              // Bij "Send Email" / "Stuur e-mail" direct e-mail link tonen
+              if (c.toLowerCase().includes('email') || c.toLowerCase().includes('e-mail') || c.toLowerCase().includes('stuur e-mail')) {
+                appendMessage('bot', {
+                  text: currentLanguage === 'nl' ?
+                    `U kunt Coen direct e-mailen via <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.` :
+                    `You can email Coen directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
+                });
+              }
+              // Bij "Book a Call" knop direct link tonen
+              else if (c.toLowerCase().includes('book a call') || c.toLowerCase().includes('boek een gesprek') || c.toLowerCase().includes('plan een gesprek')) {
+                appendMessage('bot', {
+                  text: currentLanguage === 'nl' ?
+                    `Klik op de volgende link om een gesprek in te plannen: <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">Plan een gesprek</a>.` :
+                    `Click the link to book a call: <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a>.`
+                });
+              } else {
+                handleBotResponse(c);
+              }
             };
             chipsContainer.appendChild(chip);
           });
@@ -606,7 +625,6 @@
           container.appendChild(langDiv);
         }
 
-        // Timestamp
         const time = document.createElement('time');
         time.className = 'message-time';
         time.setAttribute('datetime', new Date().toISOString());
