@@ -347,7 +347,7 @@
           name="user-input"
           aria-label="Type your message here"
           autocomplete="off"
-          placeholder=""
+          placeholder="e.g., Tell me about your Product Owner knowledge"
           required
         />
         <button type="submit" id="send-btn" aria-label="Send message">➤</button>
@@ -361,10 +361,10 @@
       const translations = {
         en: {
           title: "Solix AI Assistant",
-          placeholder: "e.g., Tell me about your Scrum Master experience",
+          placeholder: "e.g., Tell me about your Product Owner knowledge",
           welcome: {
             text: `Hello! I'm the AI assistant for Coen Zweers. I have been trained on his CV and can answer specific questions about his skills, projects, and services. How can I help?`,
-            chips: ["What are your main services?", "Tell me about a specific project", "Do you have Scrum Master experience?"],
+            chips: ["What are your main services?", "Tell me about a specific project", "Do you have Product Owner experience?"],
             langSwitcher: { lang: 'nl', text: '🇳🇱 Schakel over naar Nederlands' }
           },
           intents: [
@@ -377,20 +377,20 @@
               chips: ["Strategic Advice", "Interim Leadership"]
             },
             {
-              id: 'experience_scrum',
-              keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'],
-              response: {
-                text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework. He is also a certified Professional Scrum Master (PSM II). Is this type of role relevant for your project?`
-              },
-              chips: ["What about Product Owner roles?", "Book a Call"]
-            },
-            {
               id: 'experience_po',
               keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'],
               response: {
                 text: `Coen has extensive experience as a Product Owner and IT Product Manager. At <strong>Sunrock</strong>, he led the end-to-end creation of a customer portal and a digital design tool for PV systems. He is skilled in managing backlogs in Jira, designing in Figma, and is a certified Professional Scrum Product Owner (PSPO II).`
               },
-              chips: ["Tell me about his technical skills", "Book a Call"]
+              chips: ["Tell me about his technical skills"]
+            },
+            {
+              id: 'experience_scrum',
+              keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'],
+              response: {
+                text: `Yes, Coen has direct experience as an <strong>Agile Coach and Scrum Master at ABN AMRO</strong>. He coached three teams (25 members) to adopt a fully agile mindset and was responsible for the full Scrum framework.`
+              },
+              chips: ["What about Product Owner roles?"]
             },
             {
               id: 'experience_elipslife',
@@ -398,7 +398,7 @@
               response: {
                 text: `At elipsLife, Coen served as interim <strong>Head of Business Services</strong>. He led a team of seven and managed a major international ERP implementation, which went live successfully. This project unified teams across four countries and migrated the entire insurance portfolio for the Netherlands.`
               },
-              chips: ["What about his work at Kramp?", "Book a Call"]
+              chips: ["What about his work at Kramp?"]
             },
             {
               id: 'experience_kramp',
@@ -406,11 +406,11 @@
               response: {
                 text: `At Kramp, Coen was a <strong>Transformation Management Officer (PMO)</strong> for a major Target Operating Model program. He was responsible for project management, tracking progress across 15 workstreams, and implementing new, more efficient ways of working across Europe.`
               },
-              chips: ["What other experience does he have?", "Book a Call"]
+              chips: ["What other experience does he have?"]
             },
             {
               id: 'contact',
-              keywords: ['contact', 'book', 'call', 'introduction', 'schedule', 'meeting', 'appointment'],
+              keywords: ['contact', 'call', 'introduction', 'schedule', 'meeting', 'appointment'],
               response: {
                 text: `The best next step is to schedule a brief introductory call with Coen. You can do that by clicking the link below: <br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a><br> Or you can email directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
               }
@@ -421,7 +421,7 @@
               response: {
                 text: "You're welcome! If you have any other questions, feel free to ask. Otherwise, booking a call is the best way to connect."
               },
-              chips: ["Services", "Scrum Master experience"]
+              chips: ["Services", "Product Owner experience"]
             }
           ],
           fallback: {
@@ -432,16 +432,16 @@
               { topics: ['service', 'offer', 'capability', 'help'], intentId: 'services_overview' },
               { topics: ['experience', 'work', 'history', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
               { topics: ['scrum', 'agile'], intentId: 'experience_scrum' },
-              { topics: ['contact', 'book', 'call', 'schedule', 'appointment'], intentId: 'contact' }
+              { topics: ['contact', 'call', 'schedule', 'appointment'], intentId: 'contact' }
             ]
           }
         },
         nl: {
           title: "Solix AI Assistent",
-          placeholder: "bv. Vertel over je Scrum Master ervaring",
+          placeholder: "bv. Vertel over je Product Owner ervaring",
           welcome: {
             text: `Hallo! Ik ben de AI assistent van Coen Zweers. Ik ben getraind op basis van zijn CV en kan specifieke vragen beantwoorden over zijn vaardigheden, projecten en diensten. Hoe kan ik helpen?`,
-            chips: ["Wat zijn de hoofddiensten?", "Vertel over een specifiek project", "Heb je Scrum Master ervaring?"],
+            chips: ["Wat zijn de hoofddiensten?", "Vertel over een specifiek project", "Heb je Product Owner ervaring?"],
             langSwitcher: { lang: 'en', text: '🇬🇧 Switch to English' }
           },
           intents: [
@@ -454,20 +454,20 @@
               chips: ["Strategisch Advies", "Interim Leiderschap"]
             },
             {
-              id: 'experience_scrum',
-              keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'],
-              response: {
-                text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework. Hij is ook een gecertificeerd Professional Scrum Master (PSM II). Is dit type rol relevant voor uw project?`
-              },
-              chips: ["En als Product Owner?", "Plan een gesprek"]
-            },
-            {
               id: 'experience_po',
               keywords: ['product owner', 'product manager', 'sunrock', 'rabobank', 'figma', 'jira', 'pspo'],
               response: {
                 text: `Coen heeft uitgebreide ervaring als Product Owner en IT Product Manager. Bij <strong>Sunrock</strong> leidde hij de volledige ontwikkeling van een klantenportaal en een digitale ontwerptool voor PV-systemen. Hij is bedreven in het beheren van backlogs in Jira, ontwerpen in Figma, en is een gecertificeerd Professional Scrum Product Owner (PSPO II).`
               },
-              chips: ["Wat zijn zijn technische skills?", "Plan een gesprek"]
+              chips: ["Wat zijn zijn technische skills?"]
+            },
+            {
+              id: 'experience_scrum',
+              keywords: ['scrum master', 'agile coach', 'psm', 'scrum', 'agile mindset', 'abn amro'],
+              response: {
+                text: `Jazeker, Coen heeft directe ervaring als <strong>Agile Coach en Scrum Master bij ABN AMRO</strong>. Hij coachte drie teams (25 leden) naar een volledig agile werkwijze en was verantwoordelijk voor het Scrum-framework.`
+              },
+              chips: ["En als Product Owner?"]
             },
             {
               id: 'experience_elipslife',
@@ -475,7 +475,7 @@
               response: {
                 text: `Bij elipsLife was Coen interim <strong>Head of Business Services</strong>. Hij gaf leiding aan een team van zeven en was projectmanager voor een grote internationale ERP-implementatie die succesvol live is gegaan. Dit project verenigde teams uit vier landen en migreerde de gehele Nederlandse verzekeringsportefeuille.`
               },
-              chips: ["En zijn werk bij Kramp?", "Plan een gesprek"]
+              chips: ["En zijn werk bij Kramp?"]
             },
             {
               id: 'experience_kramp',
@@ -483,11 +483,11 @@
               response: {
                 text: `Bij Kramp was Coen een <strong>Transformation Management Officer (PMO)</strong> voor een groot Target Operating Model-programma. Hij was verantwoordelijk voor projectmanagement, het volgen van de voortgang van 15 'workstreams' en het implementeren van nieuwe, efficiëntere werkwijzen in heel Europa.`
               },
-              chips: ["Welke andere ervaring heeft hij?", "Plan een gesprek"]
+              chips: ["Welke andere ervaring heeft hij?"]
             },
             {
               id: 'contact',
-              keywords: ['contact', 'boek', 'boeken', 'gesprek', 'kennismaking', 'plannen', 'afspraak'],
+              keywords: ['contact', 'gesprek', 'kennismaking', 'plannen', 'afspraak'],
               response: {
                 text: `De beste volgende stap is een korte kennismaking met Coen. U kunt dat doen door op de onderstaande link te klikken: <br><a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">Plan een gesprek</a><br> Of u kunt direct mailen via <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
               }
@@ -498,7 +498,7 @@
               response: {
                 text: "Graag gedaan! Als u nog andere vragen heeft, stel ze gerust. Anders is het inplannen van een gesprek de beste manier om verder te praten."
               },
-              chips: ["Diensten", "Scrum Master ervaring"]
+              chips: ["Diensten", "Product Owner ervaring"]
             }
           ],
           fallback: {
@@ -509,7 +509,7 @@
               { topics: ['dienst', 'aanbod', 'helpen'], intentId: 'services_overview' },
               { topics: ['ervaring', 'werk', 'historie', 'project', 'case', 'cv'], intentId: 'experience_elipslife' },
               { topics: ['scrum', 'agile'], intentId: 'experience_scrum' },
-              { topics: ['contact', 'boek', 'gesprek', 'afspraak'], intentId: 'contact' }
+              { topics: ['contact', 'gesprek', 'afspraak'], intentId: 'contact' }
             ]
           }
         }
@@ -522,10 +522,9 @@
 
       let currentLanguage = navigator.language.startsWith('nl') ? 'nl' : 'en';
 
-      // Escape HTML to prevent XSS
       function escapeHTML(text) {
-        return text.replace(/[&<>"']/g, function (m) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+        return text.replace(/[&<>"']/g, function(m) {
+          return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'": '&#39;'}[m];
         });
       }
 
@@ -538,133 +537,107 @@
         appendMessage('bot', T.welcome);
       }
 
-      // Identify intent and return response or fallback
       function getBotResponse(userText) {
         const textLower = userText.toLowerCase();
         const T = translations[currentLanguage];
-
         for (const intent of T.intents) {
-          if (intent.keywords.some(keyword => textLower.includes(keyword))) {
+          if (intent.keywords.some(k => textLower.includes(k))) {
             return intent.response;
           }
         }
         for (const redirect of T.fallback.topicRedirects) {
-          if (redirect.topics.some(topic => textLower.includes(topic))) {
-            const matchedIntent = T.intents.find(intent => intent.id === redirect.intentId);
-            if (matchedIntent) return matchedIntent.response;
+          if (redirect.topics.some(t => textLower.includes(t))) {
+            const matched = T.intents.find(i => i.id === redirect.intentId);
+            if (matched) return matched.response;
           }
         }
         return T.fallback.generic;
       }
 
-      // Append message to chat window
       function appendMessage(sender, response) {
         const { text, chips = [], htmlContent = null, langSwitcher = null } = response;
-        const messageWrapper = document.createElement('div');
-        messageWrapper.className = `message-wrapper ${sender}-message-wrapper`;
-
-        let avatarHtml = sender === 'bot' ? `<div class="bot-avatar" aria-hidden="true">S</div>` : '';
-
-        const messageContainer = document.createElement('div');
-        messageContainer.className = 'message-container';
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-wrapper ${sender}-message-wrapper`;
+        let avatar = sender === 'bot' ? `<div class="bot-avatar" aria-hidden="true">S</div>` : '';
+        const container = document.createElement('div');
+        container.className = 'message-container';
 
         if (text) {
-          const messageContent = document.createElement('div');
-          messageContent.className = `message-content ${sender}-message-content`;
-          messageContent.innerHTML = text;
-          messageContainer.appendChild(messageContent);
+          const content = document.createElement('div');
+          content.className = `message-content ${sender}-message-content`;
+          content.innerHTML = text;
+          container.appendChild(content);
         }
 
         if (htmlContent) {
-          const embedContainer = document.createElement('div');
-          embedContainer.className = 'calendly-embed-container';
-          embedContainer.innerHTML = htmlContent;
-          messageContainer.appendChild(embedContainer);
+          const embed = document.createElement('div');
+          embed.className = 'calendly-embed-container';
+          embed.innerHTML = htmlContent;
+          container.appendChild(embed);
         }
 
-        if (chips.length > 0) {
+        if (chips.length) {
           const chipsContainer = document.createElement('div');
           chipsContainer.className = 'suggestion-chips';
-          chips.forEach(chipText => {
+          chips.forEach(c => {
             const chip = document.createElement('button');
             chip.type = 'button';
             chip.className = 'chip';
-            chip.textContent = chipText;
+            chip.textContent = c;
             chip.onclick = () => {
               disableChips(chipsContainer);
-              appendMessage('user', { text: escapeHTML(chipText) });
-              // Bij "Send Email" of "Stuur e-mail" wordt geen nieuwe bot response gehaald, maar e-mail info getoond
-              if (chipText.toLowerCase().includes('email') || chipText.toLowerCase().includes('e-mail') || chipText.toLowerCase().includes('stuur e-mail')) {
-                appendMessage('bot', {
-                  text: currentLanguage === 'nl' ?
-                    `U kunt Coen direct e-mailen via <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.` :
-                    `You can email Coen directly at <a href="mailto:coenzweers@solix.cc" class="contact-email">coenzweers@solix.cc</a>.`
-                });
-              } else if (chipText.toLowerCase().includes('book a call') || chipText.toLowerCase().includes('boek een gesprek') || chipText.toLowerCase().includes('plan een gesprek') || chipText.toLowerCase().includes('book a call') ) {
-                appendMessage('bot', {
-                  text: currentLanguage === 'nl' ?
-                    `Klik op de volgende link om een gesprek in te plannen: <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan een gesprek met Coen via Calendly">Plan een gesprek</a>.` :
-                    `Click the link to book a call: <a href="https://calendly.com/coenzweers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen on Calendly">Book a Call</a>.`
-                });
-              } else {
-                handleBotResponse(chipText);
-              }
+              appendMessage('user', { text: escapeHTML(c) });
+              handleBotResponse(c);
             };
             chipsContainer.appendChild(chip);
           });
-          messageContainer.appendChild(chipsContainer);
+          container.appendChild(chipsContainer);
         }
 
         if (langSwitcher) {
-          const langContainer = document.createElement('div');
-          langContainer.className = 'language-switcher';
+          const langDiv = document.createElement('div');
+          langDiv.className = 'language-switcher';
           const langChip = document.createElement('button');
-          langChip.type = 'button';
           langChip.className = 'chip lang-chip';
+          langChip.type = 'button';
           langChip.textContent = langSwitcher.text;
           langChip.onclick = () => setLanguage(langSwitcher.lang);
-          langContainer.appendChild(langChip);
-          messageContainer.appendChild(langContainer);
+          langDiv.appendChild(langChip);
+          container.appendChild(langDiv);
         }
 
-        const messageTime = document.createElement('time');
-        messageTime.className = 'message-time';
-        messageTime.setAttribute('datetime', new Date().toISOString());
-        messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        messageContainer.appendChild(messageTime);
+        // Timestamp
+        const time = document.createElement('time');
+        time.className = 'message-time';
+        time.setAttribute('datetime', new Date().toISOString());
+        time.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        container.appendChild(time);
 
-        messageWrapper.innerHTML = avatarHtml;
-        messageWrapper.appendChild(messageContainer);
-        chatMessages.appendChild(messageWrapper);
-        scrollToBottom();
-      }
-
-      function disableChips(container) {
-        container.querySelectorAll('.chip').forEach(chip => {
-          chip.disabled = true;
-          chip.style.cursor = 'default';
-          chip.style.opacity = '0.6';
-        });
-      }
-
-      function scrollToBottom() {
+        wrapper.innerHTML = avatar;
+        wrapper.appendChild(container);
+        chatMessages.appendChild(wrapper);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
 
+      function disableChips(container) {
+        container.querySelectorAll('.chip').forEach(c => {
+          c.disabled = true;
+          c.style.cursor = 'default';
+          c.style.opacity = '0.6';
+        });
+      }
+
       function showTypingIndicator() {
-        const indicatorHtml = `
-          <div class="message-wrapper bot-message-wrapper" id="typing-indicator" aria-live="polite" aria-atomic="true">
-            <div class="bot-avatar" aria-hidden="true">S</div>
-            <div class="message-container">
-              <div class="message-content bot-message-content" aria-label="Assistant is typing">
-                <div class="typing-indicator">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
+        const typingHtml = `<div class="message-wrapper bot-message-wrapper" id="typing-indicator" aria-live="polite" aria-atomic="true">
+          <div class="bot-avatar" aria-hidden="true">S</div>
+          <div class="message-container">
+            <div class="message-content bot-message-content" aria-label="Assistant is typing">
+              <div class="typing-indicator"><span></span><span></span><span></span></div>
             </div>
-          </div>`;
-        chatMessages.insertAdjacentHTML('beforeend', indicatorHtml);
-        scrollToBottom();
+          </div>
+        </div>`;
+        chatMessages.insertAdjacentHTML('beforeend', typingHtml);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
       }
 
       function removeTypingIndicator() {
@@ -676,27 +649,22 @@
         showTypingIndicator();
         setTimeout(() => {
           removeTypingIndicator();
-          const botResponse = getBotResponse(userText);
-          appendMessage('bot', botResponse);
+          const response = getBotResponse(userText);
+          appendMessage('bot', response);
         }, 1200);
       }
 
-      chatInputForm.addEventListener('submit', (e) => {
+      chatInputForm.onsubmit = e => {
         e.preventDefault();
-        let messageText = userInput.value.trim();
-        if (!messageText) return;
-        messageText = escapeHTML(messageText);
-        appendMessage('user', { text: messageText });
+        const val = userInput.value.trim();
+        if (!val) return;
+        appendMessage('user', { text: escapeHTML(val) });
         userInput.value = '';
-        handleBotResponse(messageText);
-      });
+        handleBotResponse(val);
+      };
 
       setLanguage(currentLanguage);
-
-      // Focus input on load
-      window.addEventListener('load', () => {
-        userInput.focus();
-      });
+      window.onload = () => userInput.focus();
     })();
   </script>
 </body>
