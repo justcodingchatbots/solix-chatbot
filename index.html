@@ -7,40 +7,51 @@
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet" />
   <style>
     :root {
-      --primary-color: #ffd100;
-      --secondary-color: #f1f3f4;
-      --bot-bg: #ffffff;
+      --primary: #ffd100;
+      --background: #f1f3f4;
+      --bot-bg: #fff;
       --user-bg: #fff8e1;
-      --font-color-main: #172b4d;
-      --font-color-sub: #6b778c;
-      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --text-main: #172b4d;
+      --text-sub: #6b778c;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       --radius-lg: 16px;
       --radius-sm: 8px;
-      --shadow-main: 0 10px 40px rgba(0,0,0,0.15);
+      --shadow: 0 10px 40px rgba(0,0,0,0.15);
     }
-    html, body {
-      margin:0; padding:0; width:100%; height:100%; background: var(--secondary-color);
+    html,body {
+      margin:0; padding:0;
+      width: 100%;
+      height: 100%;
+      background: var(--background);
       font-family: var(--font-family);
       overscroll-behavior: none;
       overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    #chatbot-container {
+    #chatbot {
       position: fixed;
-      bottom:20px; right:20px;
-      width: 100%; max-width: 420px;
-      height: 600px; max-height: 90vh;
-      background: var(--secondary-color);
-      box-shadow: var(--shadow-main);
+      right: 20px;
+      bottom: 20px;
+      width: 100%;
+      max-width: 420px;
+      height: 600px;
+      max-height: 90vh;
+      background: var(--background);
+      box-shadow: var(--shadow);
       border-radius: var(--radius-lg);
-      display:flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
       overflow: hidden;
       font-size: 14px;
-      z-index: 9999;
     }
     @media (max-width:480px) {
-      #chatbot-container {
-        bottom:10px; right:10px;
-        width: 100vw; max-width:none;
+      #chatbot {
+        bottom: 10px;
+        right: 10px;
+        width: 100vw;
+        max-width: none;
         height: 80vh;
         border-radius: 0;
         box-shadow: none;
@@ -48,59 +59,72 @@
       }
     }
     #chat-header {
-      padding: 14px 20px;
-      background: var(--primary-color);
-      color: var(--font-color-main);
+      background: var(--primary);
+      color: var(--text-main);
       display: flex;
       align-items: center;
       gap: 12px;
+      padding: 14px 20px;
       user-select: none;
       flex-shrink: 0;
     }
-    #header-avatar {
-      width:44px; height:44px;
-      background: rgba(0,0,0,0.1);
+    #chat-header-avatar {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      display: flex; justify-content:center; align-items:center;
-      font-weight: 700; font-size: 24px;
-      color: var(--font-color-main);
+      background: rgba(0,0,0,0.1);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       flex-shrink: 0;
     }
     #chat-title {
-      margin: 0;
       font-weight: 700;
       font-size: 20px;
-      user-select: none;
+      margin: 0;
     }
-    #chat-messages {
+    #chat-body {
       flex-grow: 1;
-      padding: 18px 20px;
-      background: var(--secondary-color);
       overflow-y: auto;
+      padding: 18px 20px;
+      background: var(--background);
       scroll-behavior: smooth;
       overscroll-behavior: contain;
     }
     .message-wrapper {
       display: flex;
       margin-bottom: 18px;
-      animation: fadeInUp 0.3s ease forwards;
       opacity: 0;
       transform: translateY(12px);
+      animation: fadeInUp 0.3s ease forwards;
       -webkit-font-smoothing: antialiased;
     }
     @keyframes fadeInUp {
-      to {opacity:1; transform:translateY(0);}
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .bot-wrapper {justify-content: flex-start;}
-    .user-wrapper {justify-content: flex-end;}
+    .user-message {
+      justify-content: flex-end;
+    }
+    .bot-message {
+      justify-content: flex-start;
+    }
     .bot-avatar {
-      width:36px; height:36px;
-      background: var(--primary-color);
-      color: var(--font-color-main);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: var(--text-main);
       font-weight: 700;
       font-size: 18px;
-      border-radius: 50%;
-      display: flex; justify-content:center; align-items:center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       margin-right: 14px;
       flex-shrink: 0;
       user-select: none;
@@ -110,39 +134,40 @@
       display: flex;
       flex-direction: column;
     }
-    .bot-wrapper .message-container {
+    .bot-message .message-container {
       align-items: flex-start;
     }
-    .user-wrapper .message-container {
+    .user-message .message-container {
       align-items: flex-end;
     }
-    .message-content {
+    .message-text {
       padding: 12px 18px;
       border-radius: var(--radius-lg);
       line-height: 1.4;
-      word-wrap: break-word;
+      word-break: break-word;
       white-space: pre-wrap;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       user-select: text;
     }
-    .bot-content {
+    .bot-text {
       background: var(--bot-bg);
-      color: var(--font-color-main);
+      color: var(--text-main);
       border-bottom-left-radius: var(--radius-sm);
       border-top-left-radius: var(--radius-lg);
       border-top-right-radius: var(--radius-lg);
     }
-    .user-content {
+    .user-text {
       background: var(--user-bg);
-      color: var(--font-color-main);
+      color: var(--text-main);
       border-bottom-right-radius: var(--radius-sm);
       border-top-left-radius: var(--radius-lg);
       border-top-right-radius: var(--radius-lg);
       font-weight: 600;
     }
     .timestamp {
-      margin-top: 6px; font-size: 11px;
-      color: var(--font-color-sub);
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--text-sub);
       padding: 0 8px;
       user-select: none;
       white-space: nowrap;
@@ -158,36 +183,44 @@
       border: none;
       padding: 6px 14px;
       border-radius: 20px;
-      cursor: pointer;
       font-weight: 600;
-      color: var(--font-color-main);
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       user-select: none;
-      transition: background-color 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      color: var(--text-main);
+      box-shadow: 0 1px 4px rgb(0 0 0 / 0.05);
       white-space: nowrap;
+      transition: background-color 0.3s, box-shadow 0.3s;
     }
-    .chip:hover {background: var(--primary-color); box-shadow: 0 4px 12px rgba(0,0,0,0.12);}
+    .chip:hover {
+      background: var(--primary);
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.12);
+    }
     .chip:disabled {
-      opacity: 0.5; cursor: not-allowed; box-shadow: none;
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
     }
     .language-switcher {
-      margin-top: 12px; display: flex; justify-content:center; gap:12px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
     }
     .lang-chip {
       background: transparent;
-      border: 1px solid var(--font-color-sub);
+      border: 1px solid var(--text-sub);
       border-radius: 20px;
       padding: 4px 12px;
       font-size: 12px;
-      color: var(--font-color-sub);
+      color: var(--text-sub);
       cursor: pointer;
       user-select: none;
       transition: all 0.2s ease;
     }
     .lang-chip:hover {
+      color: var(--text-main);
+      border-color: var(--text-main);
       background: var(--bot-bg);
-      color: var(--font-color-main);
-      border-color: var(--font-color-main);
     }
     #input-area {
       border-top: 1px solid #dde1e6;
@@ -200,117 +233,130 @@
       gap: 12px;
     }
     #user-input {
-      flex: 1;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      padding: 12px 18px;
-      font-size: 14px;
+      flex-grow: 1;
       font-family: var(--font-family);
-      color: var(--font-color-main);
+      font-size: 14px;
+      padding: 12px 18px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      color: var(--text-main);
       outline: none;
-      transition: border-color 0.25s;
+      transition: border-color 0.25s, box-shadow 0.25s;
     }
     #user-input:focus {
-      border-color: var(--primary-color);
-      box-shadow: 0 0 8px rgba(255, 209, 0, 0.5);
+      border-color: var(--primary);
+      box-shadow: 0 0 8px rgba(255 209 0 / 0.6);
     }
     #user-input::placeholder {
-      color: var(--font-color-sub);
+      color: var(--text-sub);
       font-weight: 400;
     }
-    #send-button {
-      background: var(--primary-color);
-      border: none;
+    #send-btn {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      width: 44px; height: 44px;
       font-size: 20px;
-      color: var(--font-color-main);
       font-weight: 700;
+      background: var(--primary);
+      color: var(--text-main);
+      border: none;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: background-color 0.2s;
       user-select: none;
+      transition: background-color 0.2s;
     }
-    #send-button:hover:not(:disabled) {
-      background: #e6bc00;
+    #send-btn:hover:not(:disabled) {
+      background: #d4b300;
     }
-    #send-button:disabled {
-      background: #ccc;
+    #send-btn:disabled {
       cursor: not-allowed;
+      background: #ccc;
+      color: #888;
     }
     .typing-indicator {
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 2px 6px;
+      padding: 2px 8px;
     }
     .typing-dot {
-      width: 8px; height: 8px;
+      width: 10px;
+      height: 10px;
+      background: var(--text-sub);
       border-radius: 50%;
-      background: var(--font-color-sub);
       animation: bounce 1.4s infinite ease-in-out;
     }
-    .typing-dot:nth-child(1) {animation-delay: 0;}
-    .typing-dot:nth-child(2) {animation-delay: 0.2s;}
-    .typing-dot:nth-child(3) {animation-delay: 0.4s;}
+    .typing-dot:nth-child(1) {
+      animation-delay: 0;
+    }
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
     @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
+      0%, 80%, 100% {
+        transform: scale(0);
+      }
+      40% {
+        transform: scale(1);
+      }
     }
     a.contact-link {
-      color: var(--primary-color);
+      color: var(--primary);
       text-decoration: underline;
     }
     a.contact-link:hover {
-      color: #e6bc00;
+      color: #d4b300;
     }
     a.calendly-link {
-      padding: 6px 12px;
-      background: var(--primary-color);
-      color: var(--font-color-main);
-      border-radius: var(--radius-sm);
-      text-decoration: none;
-      font-weight: 600;
       display: inline-block;
       margin-top: 8px;
-      transition: background-color 0.2s;
+      padding: 6px 14px;
+      background: var(--primary);
+      color: var(--text-main);
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: var(--radius-sm);
       user-select: none;
+      transition: background-color 0.2s;
     }
     a.calendly-link:hover {
-      background-color: #e6bc00;
+      background-color: #d4b300;
     }
   </style>
 </head>
 <body>
-  <div id="chatbot-container" role="region" aria-label="Solix AI Assistant chatbot">
+  <div id="chatbot" role="region" aria-label="Solix AI Assistant chatbot">
     <header id="chat-header">
-      <div id="header-avatar" aria-hidden="true">S</div>
+      <div id="chat-header-avatar" aria-hidden="true">S</div>
       <h1 id="chat-title">Solix AI Assistant</h1>
     </header>
-    <main id="chat-messages" aria-live="polite" aria-atomic="false"></main>
+    <main id="chat-body" aria-live="polite" aria-atomic="false"></main>
     <section id="input-area">
-      <form id="chat-form" aria-label="Chat input form">
-        <input id="user-input" type="text" aria-label="Message input" placeholder="Ask something about Coen's expertise or services..." autocomplete="off" required />
-        <button type="submit" id="send-button" aria-label="Send message">➤</button>
+      <form id="input-form" aria-label="Chat input form">
+        <input id="user-input" type="text" aria-label="Type your message" placeholder="Ask about Coen's expertise or services..." autocomplete="off" required />
+        <button type="submit" id="send-btn" aria-label="Send message" disabled>➤</button>
       </form>
     </section>
   </div>
   <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
   <script>
-    (function () {
+    (function(){
       const translations = {
-        en: {
+        en:{
           title: "Solix AI Assistant",
-          placeholder: "Ask something about Coen's expertise or services...",
+          placeholder: "Ask about Coen's expertise or services...",
           welcome: {
-            text: "Hello! I'm Coen Zweers' AI assistant. I can answer questions about his skills, services, and projects. How may I help you today?",
+            text: `Hello! I'm Coen Zweers' AI assistant. I can answer questions about his expertise, experience, and service offerings. How can I help you today?`,
             chips: [
-              "What services does Coen offer?",
-              "Tell me about his product owner experience",
-              "Can you explain his project at Sunrock?",
-              "How does Coen help with agile transformation?",
+              "Tell me about Coen's services",
+              "Tell me about Coen's Product Owner experience",
+              "Tell me about Coen's agile and Scrum experience",
+              "Tell me about Coen's projects",
               "Book a call",
               "Contact Coen"
             ],
@@ -318,214 +364,184 @@
           },
           intents: [
             {
-              id: "services",
-              keywords: ["service", "offering", "offer", "services", "what do you do", "help"],
-              response: {
-                text: `
-                  Coen Zweers offers expertise as a freelancer in strategy consultancy, interim management, change management, agile transformation, and advanced project management.
-                  <br><strong>Main offerings:</strong>
-                  <ul>
-                    <li>Strategic consultancy & innovation leadership</li>
-                    <li>Interim Head of Operations & Innovation</li>
-                    <li>Change management & organizational transformation</li>
-                    <li>Agile coaching & Scrum master services</li>
-                    <li>Product ownership and digital product leadership</li>
-                    <li>Workshops on project management and agile methodologies</li>
-                  </ul>
-                  Need more info or want to talk? Feel free to schedule a call or contact directly.
-                `,
-                chips: ["Book a call", "Contact Coen"]
-              }
-            },
-            {
-              id: "product_owner",
-              keywords: ["product owner", "product management", "po", "product manager", "figma", "jira"],
-              response: {
-                text: `
-                  Coen has substantial experience as a Product Owner, leading digital product development for clients like Sunrock and Rabobank.
-                  At Sunrock, he was responsible for the creation of customer portals and design tools integrating solar energy pricing and battery storage.
-                  Skilled in managing product backlogs with Jira, designing with Figma, and guiding cross-functional teams.
-                `,
-                chips: ["Tell me about his agile coaching", "Book a call"]
-              }
-            },
-            {
-              id: "agile",
-              keywords: ["agile", "scrum", "scrum master", "psm", "coach"],
-              response: {
-                text: `
-                  Coen has hands-on experience as Agile Coach and Scrum Master at ABN AMRO, coaching teams towards high-performance agile adoption.
-                  Certified Professional Scrum Master (PSM II) and experienced in coordinating agile ceremonies, improving delivery cadence, and building self-organizing teams.
-                `,
-                chips: ["Tell me about product owner experience", "Book a call"]
-              }
-            },
-            {
-              id: "projects",
-              keywords: ["projects", "sunrock", "erp", "kramp", "elipslife", "rabobank", "acc"],
-              response: {
-                text: `
-                  Coen's project highlights include:
-                  <ul>
-                    <li>ERP implementation and business services leadership at elipslife, unifying four countries' teams</li>
-                    <li>Design and launch of digital solar energy portals for Sunrock</li>
-                    <li>Transformation PMO at Kramp managing cross-European streams</li>
-                    <li>Product automation and AI monitoring at Rabobank and Accenture</li>
-                  </ul>
-                  Interested in details? Ask me!
-                `,
-                chips: ["More on elipslife project", "More on Sunrock project", "Book a call"]
-              }
-            },
-            {
-              id: "contact",
-              keywords: ["contact", "call", "book", "schedule", "appointment", "talk", "meeting"],
-              response: {
-                text: `
-                  You can schedule an introductory call with Coen using the link below:
-                  <br><a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Schedule call with Coen">Book a call</a>
-                  <br>Or email directly at <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>
-                `,
-                chips: []
-              }
-            },
-            {
-              id: "thanks",
-              keywords: ["thanks", "thank you", "thx", "great", "awesome"],
-              response: {
-                text: "You're welcome! Feel free to ask anything else or book a call to discuss your needs."
+              id:"services",
+              keywords: ["service", "services", "offering", "what do you do", "help"],
+              response:{
+                text:`Coen Zweers is a versatile freelance consultant offering:<br>
+                - Strategic consulting in renewable energy, finance and technology<br>
+                - Interim management roles (e.g., Head of Operations/Innovation)<br>
+                - Change management and agile transformation<br>
+                - Workshop facilitation on agile & project management<br>
+                More details on specific requests available. How can I help?`
               },
-              chips: ["What services do you offer?", "Book a call"]
+              chips:["Tell me about Coen's Product Owner experience","Book a call"]
+            },
+            {
+              id:"product_owner",
+              keywords:["product owner","product manager","po","product","jira","figma"],
+              response:{
+                text:`Coen has led product management and ownership roles at Sunrock and Rabobank.<br>
+                He successfully led development of digital customer portals and design tools, managing backlog with Jira, product design with Figma.<br>
+                Certified as Professional Scrum Product Owner (PSPO II).`
+              },
+              chips:["Tell me about Coen's agile experience","Book a call"]
+            },
+            {
+              id:"agile",
+              keywords:["scrum master","agile","scrum","coach","psm"],
+              response:{
+                text:`Coen worked as Agile Coach and Scrum Master at ABN AMRO.<br>
+                He successfully coached teams, implemented Scrum frameworks, and guided agile practices.<br>
+                He holds certifications PSM II and SAFe Agilist.`
+              },
+              chips:["Tell me about Coen's Product Owner experience","Book a call"]
+            },
+            {
+              id:"projects",
+              keywords:["project","portfolio","elipslife","sunrock","kramp","ing","rabobank","accenture"],
+              response:{
+                text:`Coen's key projects include:<ul>
+                <li>Leading ERP implementation at elipslife across multiple countries</li>
+                <li>Developing innovative solar energy digital solutions at Sunrock</li>
+                <li>Managing transformation program PMO at Kramp</li>
+                <li>Implementing AI monitoring and automation in Rabobank and Accenture</li>
+                </ul>`
+              },
+              chips:["Book a call","Contact Coen"]
+            },
+            {
+              id:"contact",
+              keywords:["contact","talk","call","appointment","book","schedule","meet"],
+              response:{
+                text:`You can schedule a meeting with Coen via this link:<br>
+                <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Book a call with Coen">Book a call</a><br>
+                Or email him directly at <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`
+              },
+              chips:[]
+            },
+            {
+              id:"thanks",
+              keywords:["thanks","thank you","ty","thx","great"],
+              response:{
+                text:`You're welcome! Let me know if I can help further or schedule a call.`
+              },
+              chips:["Tell me about Coen's services","Book a call"]
             }
           ],
-          fallback: {
-            generic: {
-              text: `Sorry, I don't have the answer to that. You can book a call with Coen <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Schedule call with Coen">here</a> or email <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a> for prompt assistance.`
+          fallback:{
+            generic:{
+              text:`I’m sorry, I don’t have the answer to that. You can book a meeting with Coen here:<br>
+              <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link">Book a call</a><br>
+              Or email at <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`
             },
-            topicRedirects: [
-              { topics: ["service", "help", "offering"], intentId: "services" },
-              { topics: ["product owner"], intentId: "product_owner" },
-              { topics: ["scrum", "agile", "coach"], intentId: "agile" },
-              { topics: ["project", "sunrock", "kramp", "erp", "elipslife"], intentId: "projects" },
-              { topics: ["contact", "call", "book"], intentId: "contact" }
+            topicRedirects:[
+              {topics:["service","help","offering"],intentId:"services"},
+              {topics:["product owner","po","product manager"],intentId:"product_owner"},
+              {topics:["scrum","agile","coach"],intentId:"agile"},
+              {topics:["project","portfolio","elipslife","sunrock","kramp","rabobank","accenture"],intentId:"projects"},
+              {topics:["contact","call","meet","book"],intentId:"contact"}
             ]
           }
         },
-        nl: {
-          title: "Solix AI Assistent",
-          placeholder: "Vraag mij iets over mijn Product Owner expertise...",
-          welcome: {
-            text: "Hallo! Ik ben de AI assistent van Coen Zweers. Ik kan vragen beantwoorden over zijn vaardigheden, diensten en projecten. Waarmee kan ik u vandaag helpen?",
-            chips: [
-              "Welke diensten biedt Coen aan?",
-              "Vertel me over zijn ervaring als Product Owner",
-              "Kun je iets vertellen over zijn project bij Sunrock?",
-              "Hoe helpt Coen met agile transformaties?",
+        nl:{
+          title:"Solix AI Assistent",
+          placeholder:"Vraag iets over Coen's expertise of diensten...",
+          welcome:{
+            text:`Hallo! Ik ben de AI-assistent van Coen Zweers. Ik kan vragen beantwoorden over zijn expertise, ervaring en diensten. Waarmee kan ik u helpen?`,
+            chips:[
+              "Vertel mij over Coen's diensten",
+              "Vertel over Coen's ervaring als Product Owner",
+              "Vertel over Coen's agile en Scrum ervaring",
+              "Vertel over Coen's projecten",
               "Plan een gesprek",
-              "Contact opnemen"
+              "Neem contact op met Coen"
             ],
-            langSwitcher: { lang: "en", text: "🇬🇧 Switch to English" }
+            langSwitcher:{lang:"en",text:"🇬🇧 Switch to English"}
           },
-          intents: [
+          intents:[
             {
-              id: "services",
-              keywords: ["dienst", "aanbod", "diensten", "hulp", "wat doe je"],
-              response: {
-                text: `
-                  Coen Zweers biedt freelance expertise in strategieadvies, interim management, verandermanagement, agile transformatie en geavanceerd projectmanagement.
-                  <br><strong>Belangrijkste diensten:</strong>
-                  <ul>
-                    <li>Strategisch advies & innovatief leiderschap</li>
-                    <li>Interim Hoofd Operaties & Innovatie</li>
-                    <li>Verandermanagement & organisatie transformatie</li>
-                    <li>Agile coaching & Scrum master diensten</li>
-                    <li>Producteigenaarschap en digitale productleiding</li>
-                    <li>Workshops in projectmanagement en agile methodes</li>
-                  </ul>
-                  Meer weten of een kennismakingsgesprek? Plan een call of neem contact op.
-                `,
-                chips: ["Plan een gesprek", "Contact opnemen"]
-              }
-            },
-            {
-              id: "product_owner",
-              keywords: ["product owner", "productmanager", "po", "product directeur", "figma", "jira"],
-              response: {
-                text: `
-                  Coen heeft ruime ervaring als Product Owner voor digitale producten bij klanten zoals Sunrock en Rabobank.
-                  Bij Sunrock leidde hij de ontwikkeling van klantportalen en designtools voor zonne-energie, inclusief opslag en laadinfrastructuur.
-                  Vakkundig in backlog management, Figma-ontwerpen en samenwerking tussen teams.
-                `,
-                chips: ["Vertel meer over agile coaching", "Plan een gesprek"]
-              }
-            },
-            {
-              id: "agile",
-              keywords: ["agile", "scrum", "scrum master", "coach", "psm"],
-              response: {
-                text: `
-                  Coen is ervaren Agile Coach en Scrum Master bij ABN AMRO.
-                  Hij coacht teams in een agile mindset, organiseert ceremonies en stimuleert zelfsturing.
-                  Hij is gecertificeerd Professional Scrum Master (PSM II).
-                `,
-                chips: ["Vertel meer over product management", "Plan een gesprek"]
-              }
-            },
-            {
-              id: "projects",
-              keywords: ["project", "sunrock", "erp", "kramp", "elipslife", "rabobank", "acc"],
-              response: {
-                text: `
-                  Projecten van Coen:
-                  <ul>
-                    <li>ERP-implementatie en leiderschap bij elipslife (internationaal)</li>
-                    <li>Digitale oplossingen en portals voor zonneparken bij Sunrock</li>
-                    <li>Transformatie PMO rol bij Kramp, verbeterde Europese werkmethoden</li>
-                    <li>Automatisering en AI-monitoring bij Rabobank en Accenture</li>
-                  </ul>
-                  Vragen over projecten? Stel ze gerust!
-                `,
-                chips: ["Meer over elipslife project", "Meer over Sunrock project", "Plan een gesprek"]
-              }
-            },
-            {
-              id: "contact",
-              keywords: ["contact", "gesprek", "afspraak", "call", "boek", "plan"],
-              response: {
-                text: `
-                  Plan een introductiegesprek met Coen via de volgende link:
-                  <br><a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan gesprek met Coen">Plan een gesprek</a>
-                  <br>Of neem contact op via mail: <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>
-                `,
-                chips: []
-              }
-            },
-            {
-              id: "thanks",
-              keywords: ["bedankt", "dank", "super", "top"],
-              response: {
-                text: "Graag gedaan! Stel gerust andere vragen of plan een call om vrijblijvend te sparren."
+              id:"services",
+              keywords:["dienst","diensten","aanbod","wat doe je","hulp"],
+              response:{
+                text:`Coen Zweers is een veelzijdige freelance consultant die aanbiedt:<br>
+                - Strategisch advies in hernieuwbare energie, financiën en technologie<br>
+                - Interim management (bv. Hoofd Operaties/Innovatie)<br>
+                - Verandermanagement en agile transformaties<br>
+                - Workshops agile & projectmanagement<br>
+                Voor meer info, vraag maar!`
               },
-              chips: ["Welke diensten bied je aan?", "Plan een gesprek"]
+              chips:["Vertel over Coen's ervaring als Product Owner","Plan een gesprek"]
+            },
+            {
+              id:"product_owner",
+              keywords:["product owner","productmanager","po","product"],
+              response:{
+                text:`Coen heeft uitgebreide ervaring als Product Owner bij Sunrock en Rabobank.<br>
+                Hij leidde digitale klantportalen, design tools en beheerde backlog met Jira en ontwerpen met Figma.<br>
+                Hij is gecertificeerd PSPO II.`
+              },
+              chips:["Vertel over Coen's agile ervaring","Plan een gesprek"]
+            },
+            {
+              id:"agile",
+              keywords:["scrum","agile","coach","scrum master","psm"],
+              response:{
+                text:`Coen was Agile Coach en Scrum Master bij ABN AMRO.<br>
+                Hij coacht teams, implementeert Scrum en heeft de certificaten PSM II en SAFe Agilist.`
+              },
+              chips:["Vertel over Coen's ervaring als Product Owner","Plan een gesprek"]
+            },
+            {
+              id:"projects",
+              keywords:["project","portfolio","elipslife","sunrock","kramp","rabobank","accenture"],
+              response:{
+                text:`Belangrijke projecten:<ul>
+                <li>ERP-implementatie bij elipslife (>4 landen)</li>
+                <li>Digitale oplossingen voor zonne-energie bij Sunrock</li>
+                <li>PMO rol in transformatieprogramma bij Kramp</li>
+                <li>Automatisering en AI monitoring bij Rabobank en Accenture</li>
+                </ul>`
+              },
+              chips:["Plan een gesprek","Neem contact op met Coen"]
+            },
+            {
+              id:"contact",
+              keywords:["contact","afspraak","call","plan","boek","gesprek"],
+              response:{
+                text:`Plan een gesprek met Coen via:<br>
+                <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link">Plan een gesprek</a><br>
+                Of neem direct contact op via <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`
+              },
+              chips:[]
+            },
+            {
+              id:"thanks",
+              keywords:["dank","bedankt","super","top"],
+              response:{
+                text:`Graag gedaan! Ik help graag verder of plan een gesprek.`
+              },
+              chips:["Vertel over Coen's diensten","Plan een gesprek"]
             }
           ],
-          fallback: {
-            generic: {
-              text: `Sorry, ik heb hier geen antwoord op. Je kunt een gesprek plannen met Coen via <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan gesprek met Coen">deze link</a> of direct mailen via <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`
+          fallback:{
+            generic:{
+              text:`Sorry, ik weet het antwoord niet. Plan een gesprek via:<br>
+              <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link">Plan een gesprek</a><br>
+              Of mail Coen via <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`
             },
-            topicRedirects: [
-              { topics: ["dienst", "hulp", "aanbod"], intentId: "services" },
-              { topics: ["product owner"], intentId: "product_owner" },
-              { topics: ["scrum", "agile", "coach"], intentId: "agile" },
-              { topics: ["project", "sunrock", "kramp", "erp", "elipslife"], intentId: "projects" },
-              { topics: ["contact", "call", "boek"], intentId: "contact" }
+            topicRedirects:[
+              {topics:["dienst","hulp","aanbod"],intentId:"services"},
+              {topics:["product owner","po"],intentId:"product_owner"},
+              {topics:["scrum","agile","coach"],intentId:"agile"},
+              {topics:["project","elipslife","sunrock","kramp","rabobank","accenture"],intentId:"projects"},
+              {topics:["contact","gesprek","plan"],intentId:"contact"}
             ]
           }
         }
       };
 
-      const chatMessages = document.getElementById("chat-messages");
-      const chatForm = document.getElementById("chat-form");
+      const chatBody = document.getElementById("chat-body");
+      const chatForm = document.getElementById("input-form");
       const userInput = document.getElementById("user-input");
       const chatTitle = document.getElementById("chat-title");
 
@@ -540,60 +556,63 @@
         const T = translations[lang];
         chatTitle.textContent = T.title;
         userInput.placeholder = T.placeholder;
-        chatMessages.innerHTML = "";
-        appendMessage("bot", T.welcome);
+        chatBody.innerHTML = "";
+        appendBotMessage(T.welcome);
       }
 
       function matchIntent(text) {
         const lc = text.toLowerCase();
         const T = translations[currentLanguage];
-        for (let intent of T.intents) {
-          for (let kw of intent.keywords) {
-            if (lc.includes(kw)) return intent;
+        for (const intent of T.intents) {
+          for (const keyword of intent.keywords) {
+            if (lc.includes(keyword)) return intent;
           }
         }
-        for (let redirect of T.fallback.topicRedirects) {
-          for (let topic of redirect.topics) {
-            if (lc.includes(topic)) {
-              return T.intents.find(i => i.id === redirect.intentId);
-            }
+        for (const redirect of T.fallback.topicRedirects) {
+          for (const topic of redirect.topics) {
+            if (lc.includes(topic)) return T.intents.find(i => i.id === redirect.intentId);
           }
         }
         return null;
       }
 
-      function getResponse(text) {
+      function getResponseObject(text) {
         const intent = matchIntent(text);
         const T = translations[currentLanguage];
         if (intent) {
-          return {
-            ...intent.response,
-            chips: intent.chips || []
-          };
+          return { ...intent.response, chips: intent.chips || [] };
         }
         return T.fallback.generic;
       }
 
+      function appendBotMessage(msg) {
+        appendMessage("bot", msg);
+      }
+
+      function appendUserMessage(text) {
+        appendMessage("user", { text });
+      }
+
       function appendMessage(sender, message) {
         const wrapper = document.createElement("div");
-        wrapper.className = `message-wrapper ${sender === "bot" ? "bot-wrapper" : "user-wrapper"}`;
+        wrapper.className = `message-wrapper ${sender === "bot" ? "bot-message" : "user-message"}`;
 
         const avatar = sender === "bot" ? `<div class="bot-avatar" aria-hidden="true">S</div>` : "";
         const container = document.createElement("div");
         container.className = "message-container";
 
         if (message.text) {
-          const msgEl = document.createElement("div");
-          msgEl.className = sender === "bot" ? "message-content bot-content" : "message-content user-content";
-          msgEl.innerHTML = message.text;
-          container.appendChild(msgEl);
+          const el = document.createElement("div");
+          el.className = `message-text ${sender === "bot" ? "bot-text" : "user-text"}`;
+          el.innerHTML = message.text;
+          container.appendChild(el);
         }
         if (message.html) {
           const htmlEl = document.createElement("div");
           htmlEl.innerHTML = message.html;
           container.appendChild(htmlEl);
         }
-        if (message.chips && message.chips.length) {
+        if (message.chips?.length) {
           const chipsDiv = document.createElement("div");
           chipsDiv.className = "suggestions";
           message.chips.forEach(chipText => {
@@ -603,19 +622,17 @@
             btn.textContent = chipText;
             btn.onclick = () => {
               disableChips(chipsDiv);
-              appendMessage("user", { text: escapeHTML(chipText) });
-              if (chipText.toLowerCase().includes("email") || chipText.toLowerCase().includes("mail")) {
-                const emailMsg = currentLanguage === "nl" ?
+              appendUserMessage(escapeHTML(chipText));
+              if (/email|mail/i.test(chipText)) {
+                appendBotMessage(currentLanguage === "nl" ? 
                   `Je kunt Coen bereiken via <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.` :
-                  `You can email Coen at <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`;
-                appendMessage("bot", { text: emailMsg });
-              } else if (chipText.toLowerCase().includes("book") || chipText.toLowerCase().includes("plan")) {
-                const bookedMsg = currentLanguage === "nl" ?
-                  `Plan een introductiegesprek via <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Plan gesprek met Coen">deze link</a>.` :
-                  `Schedule an intro call via <a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link" aria-label="Schedule call with Coen">this link</a>.`;
-                appendMessage("bot", { text: bookedMsg });
+                  `You can email Coen at <a href="mailto:coenzers@solix.cc" class="contact-link">coenzers@solix.cc</a>.`);
+              } else if (/book|plan/i.test(chipText)) {
+                appendBotMessage(currentLanguage === "nl" ?
+                  `Plan een gesprek via deze link:<br><a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link">Plan een gesprek</a>.` :
+                  `Schedule a call via this link:<br><a href="https://calendly.com/coenzers-solix/introduction" target="_blank" rel="noopener noreferrer" class="calendly-link">Book a call</a>.`);
               } else {
-                handleBotResponse(chipText);
+                handleUserInput(chipText);
               }
             };
             chipsDiv.appendChild(btn);
@@ -625,42 +642,41 @@
         if (message.langSwitcher) {
           const langDiv = document.createElement("div");
           langDiv.className = "language-switcher";
-          const langSwitchBtn = document.createElement("button");
-          langSwitchBtn.className = "lang-chip";
-          langSwitchBtn.type = "button";
-          langSwitchBtn.textContent = message.langSwitcher.text;
-          langSwitchBtn.onclick = () => setLanguage(message.langSwitcher.lang);
-          langDiv.appendChild(langSwitchBtn);
+          const langBtn = document.createElement("button");
+          langBtn.className = "lang-chip";
+          langBtn.type = "button";
+          langBtn.textContent = message.langSwitcher.text;
+          langBtn.onclick = () => setLanguage(message.langSwitcher.lang);
+          langDiv.appendChild(langBtn);
           container.appendChild(langDiv);
         }
         const timeEl = document.createElement("time");
         timeEl.className = "timestamp";
         timeEl.setAttribute("datetime", new Date().toISOString());
-        timeEl.textContent = new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+        timeEl.textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
         container.appendChild(timeEl);
 
         wrapper.innerHTML = avatar;
         wrapper.appendChild(container);
-        chatMessages.appendChild(wrapper);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatBody.appendChild(wrapper);
+        chatBody.scrollTop = chatBody.scrollHeight;
       }
 
       function disableChips(container) {
-        Array.from(container.children).forEach(chip => {
-          if (chip.tagName === "BUTTON") {
-            chip.disabled = true;
-            chip.style.cursor = "default";
-            chip.style.opacity = "0.5";
+        Array.from(container.children).forEach(c => {
+          if(c.tagName === "BUTTON"){
+            c.disabled = true;
+            c.style.cursor = "default";
+            c.style.opacity = "0.5";
           }
         });
       }
 
       function showTyping() {
-        const typingHtml = `
-        <div class="message-wrapper bot-wrapper" id="typing-indicator">
+        const typingHTML = `<div class="message-wrapper bot-message" id="typing-indicator">
           <div class="bot-avatar" aria-hidden="true">S</div>
           <div class="message-container">
-            <div class="message-content bot-content" aria-label="AI Assistant is typing">
+            <div class="message-text bot-text" aria-label="Assistant is typing">
               <div class="typing-indicator">
                 <span class="typing-dot"></span>
                 <span class="typing-dot"></span>
@@ -669,31 +685,31 @@
             </div>
           </div>
         </div>`;
-        chatMessages.insertAdjacentHTML("beforeend", typingHtml);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatBody.insertAdjacentHTML("beforeend", typingHTML);
+        chatBody.scrollTop = chatBody.scrollHeight;
       }
 
       function removeTyping() {
-        const typingInd = document.getElementById("typing-indicator");
-        if (typingInd) typingInd.remove();
+        const typingNode = document.getElementById("typing-indicator");
+        if(typingNode) typingNode.remove();
       }
 
-      function handleBotResponse(text) {
+      function handleUserInput(text) {
         showTyping();
         setTimeout(() => {
           removeTyping();
-          const response = getResponse(text);
-          appendMessage("bot", response);
+          const response = getResponseObject(text);
+          appendBotMessage(response);
         }, 1200);
       }
 
       chatForm.onsubmit = e => {
         e.preventDefault();
         const val = userInput.value.trim();
-        if (!val) return;
-        appendMessage("user", { text: escapeHTML(val) });
+        if(!val) return;
+        appendUserMessage(escapeHTML(val));
         userInput.value = "";
-        handleBotResponse(val);
+        handleUserInput(val);
       };
 
       setLanguage(currentLanguage);
